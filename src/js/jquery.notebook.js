@@ -117,7 +117,7 @@
 					bubbleHeight = elem.height(),
 					offset = editor.offset().left,
 					pos = {
-						top: boundary.top - 9 + w.pageYOffset - bubbleHeight - boundary.height,
+						top: boundary.top - 9 + w.pageYOffset - bubbleHeight - editor.find('p').height(),
 						left: (boundary.left + boundary.width / 2) - bubbleWidth / 2 - offset
 					};
 				console.log(boundary);
@@ -129,10 +129,11 @@
 					var tag = utils.html.addTag($(this), 'div', false, false);
 					tag.addClass('bubble');
 				}
+				tag.show();
 				bubble.updatePos($(this), tag);
 			},
 			clear: function() {
-				$(this).find('.bubble').remove();
+				$(this).find('.bubble').hide();
 			}
 		},
 		actions = {
@@ -248,7 +249,6 @@
 					txt = d.selection.createRange().text;
 				}
 				if (txt !== '') {
-					console.log(txt);
 					bubble.show.call(this);
 				} else {
 					bubble.clear.call(this);

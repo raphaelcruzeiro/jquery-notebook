@@ -23,6 +23,7 @@
 
 .jquery-notebook.editor .bubble {
     position: absolute;
+    z-index: 3;
     height: 43px;
     width: 165px;
     -webkit-border-radius: 5px;
