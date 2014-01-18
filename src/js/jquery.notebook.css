@@ -25,7 +25,6 @@
     position: absolute;
     z-index: 3;
     height: 43px;
-    width: 165px;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
@@ -57,4 +56,46 @@
     transform: rotate(45deg);
     background: #262625;
     box-shadow: 0 0 2px #262625;
+}
+
+.jquery-notebook.editor .bubble ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.jquery-notebook.editor .bubble ul li {
+    display: inline;
+}
+
+.jquery-notebook.editor .bubble button {
+    outline: none;
+    border: none;
+    background: transparent;
+    width: 42px;
+    height: 42px;
+    font-family: FontAwesome;
+    color: white;
+    font-size: 14pt;
+    cursor: pointer;
+}
+
+.jquery-notebook.editor .bubble button.bold:after {
+    content: "\f032";
+}
+
+.jquery-notebook.editor .bubble button.italic:after {
+    content: "\f033";
+}
+
+.jquery-notebook.editor .bubble button.underline:after {
+    content: "\f0cd";
+}
+
+.jquery-notebook.editor .bubble button.link:after {
+    content: "\f0c1";
+}
+
+.jquery-notebook.editor .bubble button.paste:after {
+    content: "\f0ea";
 }

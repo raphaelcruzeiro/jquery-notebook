@@ -15,6 +15,8 @@
 (function($, d, w) {
 
 	var isMac = w.navigator.platform == 'MacIntel',
+		mouseX = 0,
+		mouseY = 0,
 		cache = {
 			command: false,
 			shift: false
@@ -123,11 +125,37 @@
 				console.log(boundary);
 				elem.css(pos);
 			},
+			buildMenu: function(editor, elem) {
+				var ul = utils.html.addTag(elem, 'ul', false, false);
+				for (var cmd in modifiers) {
+					var li = utils.html.addTag(ul, 'li', false, false);
+					var btn = utils.html.addTag(li, 'button', false, false);
+					btn.attr('editor-command', modifiers[cmd]);
+					btn.addClass(modifiers[cmd]);
+				}
+				var li = utils.html.addTag(ul, 'li', false, false);
+				var btn = utils.html.addTag(li, 'button', false, false);
+				btn.attr('editor-command', 'link');
+				btn.addClass('link');
+				elem.find('button').click(function(e) {
+					e.preventDefault();
+					console.log('click');
+					var cmd = $(this).attr('editor-command');
+					if (cmd === 'bold') {
+						events.commands.bold.call(editor, e);
+					} else if (cmd === 'italic') {
+						events.commands.italic.call(editor, e);
+					} else if (cmd === 'underline') {
+						events.commands.underline.call(editor, e);
+					}
+				});
+			},
 			show: function() {
 				var tag = $(this).find('.bubble');
 				if (!tag.length) {
 					var tag = utils.html.addTag($(this), 'div', false, false);
 					tag.addClass('bubble');
+					bubble.buildMenu(this, tag);
 				}
 				tag.show();
 				bubble.updatePos($(this), tag);
@@ -144,6 +172,7 @@
 				elem.bind('paste', events.paste);
 				elem.mousedown(rawEvents.mouseClick);
 				elem.mouseup(rawEvents.mouseUp);
+				elem.mousemove(rawEvents.mouseMove);
 			},
 			setPlaceholder: function(e) {
 				if (/^\s*$/.test($(this).text())) {
@@ -237,7 +266,18 @@
 					e.preventDefault();
 					return;
 				}
-				bubble.clear.call(this);
+				if ($(this).find('.bubble:visible').length) {
+					var bubbleTag = $(this).find('.bubble:visible'),
+						bubbleX = bubbleTag.offset().left,
+						bubbleY = bubbleTag.offset().top,
+						bubbleWidth = bubbleTag.width(),
+						bubbleHeight = bubbleTag.height();
+					if (mouseX > bubbleX && mouseX < bubbleX + bubbleWidth &&
+						mouseY > bubbleY && mouseY < bubbleY + bubbleHeight) {
+						return;
+					}
+				}
+				bubble.clear.call(elem);
 			},
 			mouseUp: function(e) {
 				var txt = '';
@@ -253,6 +293,10 @@
 				} else {
 					bubble.clear.call(this);
 				}
+			},
+			mouseMove: function(e) {
+				mouseX = e.pageX;
+				mouseY = e.pageY;
 			}
 		},
 		events = {
