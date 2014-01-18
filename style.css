@@ -1,0 +1,9 @@
+html, body {
+    font-family: "Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Verdana,sans-serif;
+}
+
+.editor {
+    width: 680px;
+    margin: auto;
+    height: 700px;
+}

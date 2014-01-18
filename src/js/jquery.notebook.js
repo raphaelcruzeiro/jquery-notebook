@@ -1,3 +1,17 @@
+/*
+ * jQuery Notebook
+ *
+ * Copyright 2014, Raphael Cruzeiro = http://raphaelcruzeiro.eu/
+ * Released under the MIT License
+ * http://opensource.org/licenses/MIT
+ *
+ * Github https://github.com/raphaelcruzeiro/jquery-notebook
+ * Version 0.5
+ *
+ * Some functions of this pluging were based on Jacob Kelley's Medium.js
+ * https://github.com/jakiestfu/Medium.js/
+ */
+
 (function($, d, w) {
 
 	var isMac = w.navigator.platform == 'MacIntel',
@@ -94,12 +108,41 @@
 				}
 			}
 		},
+		bubble = {
+			updatePos: function(editor, elem) {
+				var sel = w.getSelection(),
+					range = sel.getRangeAt(0),
+					boundary = range.getBoundingClientRect(),
+					bubbleWidth = elem.width(),
+					bubbleHeight = elem.height(),
+					offset = editor.offset().left,
+					pos = {
+						top: boundary.top - 9 + w.pageYOffset - bubbleHeight - boundary.height,
+						left: (boundary.left + boundary.width / 2) - bubbleWidth / 2 - offset
+					};
+				console.log(boundary);
+				elem.css(pos);
+			},
+			show: function() {
+				var tag = $(this).find('.bubble');
+				if (!tag.length) {
+					var tag = utils.html.addTag($(this), 'div', false, false);
+					tag.addClass('bubble');
+				}
+				bubble.updatePos($(this), tag);
+			},
+			clear: function() {
+				$(this).find('.bubble').remove();
+			}
+		},
 		actions = {
 			bindEvents: function(elem) {
 				elem.keydown(rawEvents.keydown);
 				elem.keyup(rawEvents.keyup);
 				elem.focus(rawEvents.focus);
 				elem.bind('paste', events.paste);
+				elem.mousedown(rawEvents.mouseClick);
+				elem.mouseup(rawEvents.mouseUp);
 			},
 			setPlaceholder: function(e) {
 				if (/^\s*$/.test($(this).text())) {
@@ -183,6 +226,33 @@
 			focus: function(e) {
 				cache.command = false;
 				cache.shift = false;
+			},
+			mouseClick: function(e) {
+				var elem = this;
+				if (e.button === 2) {
+					setTimeout(function() {
+						bubble.show.call(elem);
+					}, 50);
+					e.preventDefault();
+					return;
+				}
+				bubble.clear.call(this);
+			},
+			mouseUp: function(e) {
+				var txt = '';
+				if (w.getSelection) {
+					txt = w.getSelection().toString();
+				} else if (d.getSelection) {
+					txt = d.getSelection().toString();
+				} else if (d.selection) {
+					txt = d.selection.createRange().text;
+				}
+				if (txt !== '') {
+					console.log(txt);
+					bubble.show.call(this);
+				} else {
+					bubble.clear.call(this);
+				}
 			}
 		},
 		events = {
@@ -199,7 +269,7 @@
 					e.preventDefault();
 					d.execCommand('underline', false);
 				},
-			paste: function(e) {
+				paste: function(e) {
 					var elem = $(this);
 					setTimeout(function() {
 						elem.find('*').each(function() {
