@@ -1,0 +1,228 @@
+(function($, d, w) {
+
+	var isMac = w.navigator.platform == 'MacIntel',
+		cache = {
+			command: false,
+			shift: false
+		},
+		modifiers = {
+			66: 'bold',
+			73: 'italic',
+			85: 'underline',
+			86: 'paste'
+		},
+		utils = {
+			keyboard: {
+				isCommand: function(e, callbackTrue, callbackFalse) {
+					if (isMac && e.metaKey || !isMac && e.ctrlKey) {
+						callbackTrue();
+					} else {
+						callbackFalse();
+					}
+				},
+				isShift: function(e, callbackTrue, callbackFalse) {
+					if (e.shiftKey) {
+						callbackTrue();
+					} else {
+						callbackFalse();
+					}
+				},
+				isModifier: function(e, callback) {
+					var key = e.which,
+						cmd = modifiers[key];
+					if (cmd) {
+						callback.call(this, cmd);
+					}
+				}
+			},
+			html: {
+				addTag: function(elem, tag, focus, editable) {
+					var newElement = $(d.createElement(tag));
+					newElement.attr('contenteditable', Boolean(editable));
+					newElement.append(' ');
+					elem.append(newElement);
+					if (focus) {
+						cache.focusedElement = elem.children().last();
+						utils.cursor.set(elem, 0, cache.focusedElement);
+					}
+					return newElement;
+				}
+			},
+			cursor: {
+				set: function(editor, pos, elem) {
+					if (d.createRange) {
+						var range = d.createRange(),
+							selection = w.getSelection(),
+							lastChild = editor.children().last(),
+							length = lastChild.html().length - 1,
+							toModify = elem ? elem[0] : lastChild[0],
+							theLength = typeof pos !== 'undefined' ? pos : length;
+						range.setStart(toModify, theLength);
+						range.collapse(true);
+						selection.removeAllRanges();
+						selection.addRange(range);
+					} else {
+						var range = d.body.createTextRange();
+						range.moveToElementText(elem);
+						range.collapse(false);
+						range.select();
+					}
+				}
+			},
+			selection: {
+				save: function() {
+					if (w.getSelection) {
+						var sel = w.getSelection();
+						if (sel.rangeCount > 0) {
+							return sel.getRangeAt(0);
+						}
+					} else if (d.selection && d.selection.createRange) { // IE
+						return d.selection.createRange();
+					}
+					return null;
+				},
+				restore: function(range) {
+					if (range) {
+						if (w.getSelection) {
+							var sel = w.getSelection();
+							sel.removeAllRanges();
+							sel.addRange(range);
+						} else if (d.selection && range.select) { // IE
+							range.select();
+						}
+					}
+				}
+			}
+		},
+		actions = {
+			bindEvents: function(elem) {
+				elem.keydown(rawEvents.keydown);
+				elem.keyup(rawEvents.keyup);
+				elem.focus(rawEvents.focus);
+				elem.bind('paste', events.paste);
+			},
+			setPlaceholder: function(e) {
+				if (/^\s*$/.test($(this).text())) {
+					$(this).empty();
+					var placeholder = utils.html.addTag($(this), 'p').addClass('placeholder');
+					placeholder.append($(this).attr('editor-placeholder'));
+					utils.html.addTag($(this), 'p', false, true);
+				} else {
+					console.log('remove placeholder');
+					$(this).find('.placeholder').remove();
+				}
+			},
+			preserveElementFocus: function() {
+				var anchorNode = w.getSelection() ? w.getSelection().anchorNode : d.activeElement;
+				if (anchorNode) {
+					var current = anchorNode.parentNode,
+						diff = current !== cache.focusedElement,
+						children = this.children,
+						elementIndex = 0;
+					if (current === this) {
+						current = anchorNode;
+					}
+					for (var i = 0; i < children.length; i++) {
+						if (current === children[i]) {
+							elementIndex = i;
+							break;
+						}
+					}
+					if (diff) {
+						cache.focusedElement = current;
+						cache.focusedElementIndex = elementIndex;
+					}
+				}
+			},
+			prepare: function(elem, options) {
+				if (typeof options.mode != 'undefined') {
+					elem.attr('editor-mode', options.mode);
+				}
+				if (typeof options.placeholder != 'undefined') {
+					elem.attr('editor-placeholder', options.placeholder);
+				} else {
+					elem.attr('editor-placeholder', 'Your text here...');
+				}
+				elem.attr('contenteditable', true);
+				elem.css('position', 'relative');
+				elem.addClass('jquery-notebook editor');
+				actions.setPlaceholder.call(elem, {});
+				actions.preserveElementFocus.call(elem);
+			}
+		},
+		rawEvents = {
+			keydown: function(e) {
+				utils.keyboard.isCommand(e, function() {
+					cache.command = true;
+				}, function() {
+					cache.command = false;
+				});
+				utils.keyboard.isShift(e, function() {
+					cache.shift = true;
+				}, function() {
+					cache.shift = false;
+				});
+				utils.keyboard.isModifier.call(this, e, function(modifier) {
+					if (cache.command) {
+						events.commands[modifier].call(this, e);
+					}
+				});
+				if (e.which === 13) {
+					events.enterKey.call(this, e);
+				}
+			},
+			keyup: function(e) {
+				utils.keyboard.isCommand(e, function() {
+					cache.command = false;
+				}, function() {
+					cache.command = true;
+				});
+				actions.preserveElementFocus.call(this);
+				actions.setPlaceholder.call(this);
+			},
+			focus: function(e) {
+				cache.command = false;
+				cache.shift = false;
+			}
+		},
+		events = {
+			commands: {
+				bold: function(e) {
+					e.preventDefault();
+					d.execCommand('bold', false);
+				},
+				italic: function(e) {
+					e.preventDefault();
+					d.execCommand('italic', false);
+				},
+				underline: function(e) {
+					e.preventDefault();
+					d.execCommand('underline', false);
+				},
+			paste: function(e) {
+					var elem = $(this);
+					setTimeout(function() {
+						elem.find('*').each(function() {
+							var current = $(this);
+							$.each(this.attributes, function() {
+								current.removeAttr(this.name);
+							});
+						});
+					}, 100);
+				},
+			},
+			enterKey: function(e) {
+				if ($(this).attr('editor-mode') === 'inline') {
+					e.preventDefault();
+					return;
+				}
+			}
+		};
+
+	$.fn.notebook = function(options) {
+		actions.prepare(this, options);
+		actions.bindEvents(this);
+		return this;
+	};
+
+})(jQuery, document, window);

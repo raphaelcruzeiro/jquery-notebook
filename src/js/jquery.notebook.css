@@ -1,0 +1,22 @@
+.jquery-notebook.editor {
+    position: relative;
+    outline: none;
+    min-height: 50px;
+}
+
+.jquery-notebook.editor p {
+    z-index: 2;
+    position: relative;
+    min-height: 1px;
+}
+
+.jquery-notebook.editor p.placeholder {
+    position: absolute;
+    z-index: 1;
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.jquery-notebook p:first-child, .jquery-notebook p.placeholder + p {
+    margin-top: 0;
+}
