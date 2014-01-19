@@ -8,7 +8,7 @@
  * Github https://github.com/raphaelcruzeiro/jquery-notebook
  * Version 0.5
  *
- * Some functions of this pluging were based on Jacob Kelley's Medium.js
+ * Some functions of this plugin were based on Jacob Kelley's Medium.js
  * https://github.com/jakiestfu/Medium.js/
  */
 
@@ -107,6 +107,17 @@
 							range.select();
 						}
 					}
+				},
+				getText: function() {
+					var txt = '';
+					if (w.getSelection) {
+						txt = w.getSelection().toString();
+					} else if (d.getSelection) {
+						txt = d.getSelection().toString();
+					} else if (d.selection) {
+						txt = d.selection.createRange().text;
+					}
+					return txt;
 				}
 			}
 		},
@@ -134,7 +145,7 @@
 				}
 				var li = utils.html.addTag(ul, 'li', false, false);
 				var btn = utils.html.addTag(li, 'button', false, false);
-				btn.attr('editor-command', 'link');
+				btn.attr('editor-command', 'anchor');
 				btn.addClass('link');
 				elem.find('button').click(function(e) {
 					e.preventDefault();
@@ -145,6 +156,8 @@
 						events.commands.italic.call(editor, e);
 					} else if (cmd === 'underline') {
 						events.commands.underline.call(editor, e);
+					} else if (cmd === 'anchor') {
+						events.commands.anchor.call(editor, e);
 					}
 				});
 			},
@@ -171,6 +184,7 @@
 				elem.mousedown(rawEvents.mouseClick);
 				elem.mouseup(rawEvents.mouseUp);
 				elem.mousemove(rawEvents.mouseMove);
+				elem.blur(rawEvents.blur);
 			},
 			setPlaceholder: function(e) {
 				if (/^\s*$/.test($(this).text())) {
@@ -283,14 +297,7 @@
 			mouseUp: function(e) {
 				var elem = this;
 				setTimeout(function() {
-					var txt = '';
-					if (w.getSelection) {
-						txt = w.getSelection().toString();
-					} else if (d.getSelection) {
-						txt = d.getSelection().toString();
-					} else if (d.selection) {
-						txt = d.selection.createRange().text;
-					}
+					var txt = utils.selection.getText();
 					if (txt !== '') {
 						bubble.show.call(elem);
 					} else {
@@ -301,6 +308,9 @@
 			mouseMove: function(e) {
 				mouseX = e.pageX;
 				mouseY = e.pageY;
+			},
+			blur: function(e) {
+
 			}
 		},
 		events = {
@@ -328,6 +338,11 @@
 						});
 					}, 100);
 				},
+				anchor: function(e) {
+					e.preventDefault();
+					console.log('link');
+					d.execCommand('createlink', false);
+				}
 			},
 			enterKey: function(e) {
 				if ($(this).attr('editor-mode') === 'inline') {
