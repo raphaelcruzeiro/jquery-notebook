@@ -99,3 +99,13 @@
 .jquery-notebook.editor .bubble button.paste:after {
     content: "\f0ea";
 }
+
+.jquery-notebook.editor .bubble button.h1:after {
+    font-family: inherit;
+    content: "h1";
+}
+
+.jquery-notebook.editor .bubble button.h2:after {
+    font-family: inherit;
+    content: "h2";
+}

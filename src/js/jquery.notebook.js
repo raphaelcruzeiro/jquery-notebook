@@ -25,7 +25,8 @@
 			66: 'bold',
 			73: 'italic',
 			85: 'underline',
-			86: 'paste'
+			112: 'h1',
+			113: 'h2'
 		},
 		utils = {
 			keyboard: {
@@ -150,15 +151,7 @@
 				elem.find('button').click(function(e) {
 					e.preventDefault();
 					var cmd = $(this).attr('editor-command');
-					if (cmd === 'bold') {
-						events.commands.bold.call(editor, e);
-					} else if (cmd === 'italic') {
-						events.commands.italic.call(editor, e);
-					} else if (cmd === 'underline') {
-						events.commands.underline.call(editor, e);
-					} else if (cmd === 'anchor') {
-						events.commands.anchor.call(editor, e);
-					}
+					events.commands[cmd].call(editor, e);
 				});
 			},
 			show: function() {
@@ -191,9 +184,8 @@
 					$(this).empty();
 					var placeholder = utils.html.addTag($(this), 'p').addClass('placeholder');
 					placeholder.append($(this).attr('editor-placeholder'));
-					utils.html.addTag($(this), 'p', false, true);
+					utils.html.addTag($(this), 'p', typeof e.focus != 'undefined' ? e.focus : false, true);
 				} else {
-					console.log('remove placeholder');
 					$(this).find('.placeholder').remove();
 				}
 			},
@@ -266,7 +258,9 @@
 					cache.command = true;
 				});
 				actions.preserveElementFocus.call(this);
-				actions.setPlaceholder.call(this);
+				actions.setPlaceholder.call(this, {
+					focus: true
+				});
 			},
 			focus: function(e) {
 				cache.command = false;
@@ -342,6 +336,14 @@
 					e.preventDefault();
 					console.log('link');
 					d.execCommand('createlink', false);
+				},
+				h1: function(e) {
+					e.preventDefault();
+					d.execCommand('formatBlock', false, '<h1>');
+				},
+				h2: function(e) {
+					e.preventDefault();
+					d.execCommand('formatBlock', false, '<h2>');
 				}
 			},
 			enterKey: function(e) {
