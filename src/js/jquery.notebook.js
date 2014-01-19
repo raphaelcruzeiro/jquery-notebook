@@ -131,8 +131,8 @@
 					bubbleHeight = elem.height(),
 					offset = editor.offset().left,
 					pos = {
-						top: boundary.top - 9 + w.pageYOffset - bubbleHeight - editor.find('p').height(),
-						left: (boundary.left + boundary.width / 2) - bubbleWidth / 2 - offset
+						top: boundary.top - bubbleHeight - 8,
+						left: (boundary.left + boundary.width / 2) - bubbleWidth / 2
 					};
 				elem.css(pos);
 			},
@@ -155,17 +155,17 @@
 				});
 			},
 			show: function() {
-				var tag = $(this).find('.bubble');
+				var tag = $(this).parent().find('.bubble');
 				if (!tag.length) {
-					var tag = utils.html.addTag($(this), 'div', false, false);
-					tag.addClass('bubble');
+					var tag = utils.html.addTag($(this).parent(), 'div', false, false);
+					tag.addClass('jquery-notebook bubble');
 					bubble.buildMenu(this, tag);
 				}
 				tag.show();
 				bubble.updatePos($(this), tag);
 			},
 			clear: function() {
-				$(this).find('.bubble').hide();
+				$(this).parent().find('.bubble').hide();
 			}
 		},
 		actions = {
@@ -250,6 +250,9 @@
 				if (e.which === 27) {
 					bubble.clear.call(this);
 				}
+				if (e.which === 86) {
+					events.paste.call(this, e);
+				}
 			},
 			keyup: function(e) {
 				utils.keyboard.isCommand(e, function() {
@@ -321,17 +324,6 @@
 					e.preventDefault();
 					d.execCommand('underline', false);
 				},
-				paste: function(e) {
-					var elem = $(this);
-					setTimeout(function() {
-						elem.find('*').each(function() {
-							var current = $(this);
-							$.each(this.attributes, function() {
-								current.removeAttr(this.name);
-							});
-						});
-					}, 100);
-				},
 				anchor: function(e) {
 					e.preventDefault();
 					console.log('link');
@@ -351,6 +343,18 @@
 					e.preventDefault();
 					return;
 				}
+			},
+			paste: function(e) {
+				var elem = $(this);
+				setTimeout(function() {
+					elem.find('*').each(function() {
+						var current = $(this);
+						$.each(this.attributes, function() {
+							console.log(this.name);
+							current.removeAttr(this.name);
+						});
+					});
+				}, 100);
 			}
 		};
 

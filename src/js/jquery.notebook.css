@@ -21,7 +21,7 @@
     margin-top: 0;
 }
 
-.jquery-notebook.editor .bubble {
+.jquery-notebook.bubble {
     position: absolute;
     z-index: 3;
     height: 43px;
@@ -40,7 +40,7 @@
     transition: 0.5s ease-in-out;
 }
 
-.jquery-notebook.editor .bubble:after {
+.jquery-notebook.bubble:after {
     content: '';
     display: block;
     position: absolute;
@@ -58,17 +58,17 @@
     box-shadow: 0 0 2px #262625;
 }
 
-.jquery-notebook.editor .bubble ul {
+.jquery-notebook.bubble ul {
     padding: 0;
     margin: 0;
     list-style: none;
 }
 
-.jquery-notebook.editor .bubble ul li {
+.jquery-notebook.bubble ul li {
     display: inline;
 }
 
-.jquery-notebook.editor .bubble button {
+.jquery-notebook.bubble button {
     outline: none;
     border: none;
     background: transparent;
@@ -80,32 +80,32 @@
     cursor: pointer;
 }
 
-.jquery-notebook.editor .bubble button.bold:after {
+.jquery-notebook.bubble button.bold:after {
     content: "\f032";
 }
 
-.jquery-notebook.editor .bubble button.italic:after {
+.jquery-notebook.bubble button.italic:after {
     content: "\f033";
 }
 
-.jquery-notebook.editor .bubble button.underline:after {
+.jquery-notebook.bubble button.underline:after {
     content: "\f0cd";
 }
 
-.jquery-notebook.editor .bubble button.link:after {
+.jquery-notebook.bubble button.link:after {
     content: "\f0c1";
 }
 
-.jquery-notebook.editor .bubble button.paste:after {
+.jquery-notebook.bubble button.paste:after {
     content: "\f0ea";
 }
 
-.jquery-notebook.editor .bubble button.h1:after {
+.jquery-notebook.bubble button.h1:after {
     font-family: inherit;
     content: "h1";
 }
 
-.jquery-notebook.editor .bubble button.h2:after {
+.jquery-notebook.bubble button.h2:after {
     font-family: inherit;
     content: "h2";
 }
