@@ -122,7 +122,6 @@
 						top: boundary.top - 9 + w.pageYOffset - bubbleHeight - editor.find('p').height(),
 						left: (boundary.left + boundary.width / 2) - bubbleWidth / 2 - offset
 					};
-				console.log(boundary);
 				elem.css(pos);
 			},
 			buildMenu: function(editor, elem) {
@@ -139,7 +138,6 @@
 				btn.addClass('link');
 				elem.find('button').click(function(e) {
 					e.preventDefault();
-					console.log('click');
 					var cmd = $(this).attr('editor-command');
 					if (cmd === 'bold') {
 						events.commands.bold.call(editor, e);
@@ -243,6 +241,9 @@
 				if (e.which === 13) {
 					events.enterKey.call(this, e);
 				}
+				if (e.which === 27) {
+					bubble.clear.call(this);
+				}
 			},
 			keyup: function(e) {
 				utils.keyboard.isCommand(e, function() {
@@ -280,19 +281,22 @@
 				bubble.clear.call(elem);
 			},
 			mouseUp: function(e) {
-				var txt = '';
-				if (w.getSelection) {
-					txt = w.getSelection().toString();
-				} else if (d.getSelection) {
-					txt = d.getSelection().toString();
-				} else if (d.selection) {
-					txt = d.selection.createRange().text;
-				}
-				if (txt !== '') {
-					bubble.show.call(this);
-				} else {
-					bubble.clear.call(this);
-				}
+				var elem = this;
+				setTimeout(function() {
+					var txt = '';
+					if (w.getSelection) {
+						txt = w.getSelection().toString();
+					} else if (d.getSelection) {
+						txt = d.getSelection().toString();
+					} else if (d.selection) {
+						txt = d.selection.createRange().text;
+					}
+					if (txt !== '') {
+						bubble.show.call(elem);
+					} else {
+						bubble.clear.call(elem);
+					}
+				}, 50);
 			},
 			mouseMove: function(e) {
 				mouseX = e.pageX;
