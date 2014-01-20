@@ -174,10 +174,19 @@
 					var cmd = $(this).attr('editor-command');
 					events.commands[cmd].call(editor, e);
 				});
-				var linkInput = utils.html.addTag(elem, 'input', false, false);
+				var linkArea = utils.html.addTag(elem, 'div', false, false);
+				linkArea.addClass('link-area');
+				var linkInput = utils.html.addTag(linkArea, 'input', false, false);
 				linkInput.attr({
 					type: 'text'
-				}).addClass('create-link');
+				});
+				var closeBtn = utils.html.addTag(linkArea, 'button', false, false);
+				closeBtn.click(function(e) {
+					e.preventDefault();
+					var editor = $(this).closest('.editor');
+					$(this).closest('.link-area').hide();
+					$(this).closest('.bubble').find('ul').show();
+				});
 			},
 			show: function() {
 				var tag = $(this).parent().find('.bubble');
@@ -203,7 +212,7 @@
 			showLinkInput: function(selection) {
 				bubble.hideButtons.call(this);
 				var editor = this;
-				var elem = $(this).parent().find('.bubble').find('.create-link');
+				var elem = $(this).parent().find('.bubble').find('input[type=text]');
 				elem.unbind('click');
 				elem.keydown(function(e) {
 					var elem = $(this);
@@ -228,10 +237,11 @@
 						}
 					}, 1);
 				});
-				elem.show().focus().val('http://');
+				$(this).parent().find('.link-area').show();
+				elem.val('http://').focus();
 			},
 			hideLinkInput: function() {
-				$(this).parent().find('.bubble').find('.create-link').hide();
+				$(this).parent().find('.bubble').find('.link-area').hide();
 			}
 		},
 		actions = {

@@ -25,6 +25,7 @@
     position: absolute;
     z-index: 3;
     height: 43px;
+    width: 280px;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
@@ -110,9 +111,20 @@
     content: "h2";
 }
 
-.jquery-notebook .create-link {
-    display:none;
-    width: 272px;
+.jquery-notebook .link-area {
+    display: none;
+}
+
+.jquery-notebook .link-area button {
+    float: left;
+}
+
+.jquery-notebook .link-area button:after {
+    content: "\f00d";
+}
+
+.jquery-notebook input[type=text] {
+    width: 220px;
     height: 28px;
     margin: 6px 0 0 10px;
     background: none;
@@ -120,4 +132,5 @@
     outline: none;
     color:#fff;
     font-size: 14px;
+    float: left;
 }
