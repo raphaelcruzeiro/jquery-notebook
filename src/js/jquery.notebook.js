@@ -50,7 +50,12 @@
 					if (cmd) {
 						callback.call(this, cmd);
 					}
-				}
+				},
+        isEnter: function(e, callback) {
+          if(e.which === 13) {
+            callback();
+          }
+        }
 			},
 			html: {
 				addTag: function(elem, tag, focus, editable) {
@@ -120,7 +125,12 @@
 					}
 					return txt;
 				}
-			}
+			},
+      validation: {
+        isUrl: function(url) {
+          return (/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/).test(url);
+        }
+      }
 		},
 		bubble = {
 			updatePos: function(editor, elem) {
@@ -153,6 +163,9 @@
 					var cmd = $(this).attr('editor-command');
 					events.commands[cmd].call(editor, e);
 				});
+
+        var linkInput = utils.html.addTag(elem, 'input', false, false);
+        linkInput.attr({type: 'text'}).addClass('create-link');
 			},
 			show: function() {
 				var tag = $(this).parent().find('.bubble');
@@ -166,7 +179,33 @@
 			},
 			clear: function() {
 				$(this).parent().find('.bubble').hide();
-			}
+        bubble.hideLinkInput();
+        bubble.showButtons.call(this);
+			},
+      hideButtons: function() {
+        $('.bubble').find('ul').hide();
+      },
+      showButtons: function() {
+        $('.bubble').find('ul').show();
+      },
+      showLinkInput: function(callback) {
+        var that =
+        this.hideButtons.call(this);
+        var elem = $('.bubble').find('.create-link');
+        elem.keydown(function(e) {
+            utils.keyboard.isEnter(e, function() {
+              e.preventDefault();
+              var url = elem.val();
+              if(utils.validation.isUrl(url)) {
+                callback.call(w, url);
+                bubble.clear();
+              }
+            });
+          }).show().focus().val('http://');
+      },
+      hideLinkInput: function() {
+        $('.bubble').find('.create-link').hide();
+      }
 		},
 		actions = {
 			bindEvents: function(elem) {
@@ -325,10 +364,12 @@
 					d.execCommand('underline', false);
 				},
 				anchor: function(e) {
-					e.preventDefault();
-					console.log('link');
-					d.execCommand('createlink', false);
-				},
+          var s = utils.selection.save();
+          bubble.showLinkInput(function(url) {
+            utils.selection.restore(s);
+            d.execCommand('insertHTML', false, '<a href="'+ url +'">'+ utils.selection.getText() +'</a>');
+          });
+        },
 				h1: function(e) {
 					e.preventDefault();
 					d.execCommand('formatBlock', false, '<h1>');
