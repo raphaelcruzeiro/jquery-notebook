@@ -124,6 +124,17 @@
 						txt = d.selection.createRange().text;
 					}
 					return txt;
+				},
+				clear: function() {
+					if (window.getSelection) {
+						if (window.getSelection().empty) { // Chrome
+							window.getSelection().empty();
+						} else if (window.getSelection().removeAllRanges) { // Firefox
+							window.getSelection().removeAllRanges();
+						}
+					} else if (document.selection) { // IE?
+						document.selection.empty();
+					}
 				}
 			},
 			validation: {
@@ -163,7 +174,6 @@
 					var cmd = $(this).attr('editor-command');
 					events.commands[cmd].call(editor, e);
 				});
-
 				var linkInput = utils.html.addTag(elem, 'input', false, false);
 				linkInput.attr({
 					type: 'text'
@@ -181,32 +191,47 @@
 			},
 			clear: function() {
 				$(this).parent().find('.bubble').hide();
-				bubble.hideLinkInput();
+				bubble.hideLinkInput.call(this);
 				bubble.showButtons.call(this);
 			},
 			hideButtons: function() {
-				$('.bubble').find('ul').hide();
+				$(this).parent().find('.bubble').find('ul').hide();
 			},
 			showButtons: function() {
-				$('.bubble').find('ul').show();
+				$(this).parent().find('.bubble').find('ul').show();
 			},
-			showLinkInput: function(callback) {
-				var that =
-					this.hideButtons.call(this);
-				var elem = $('.bubble').find('.create-link');
+			showLinkInput: function(selection) {
+				bubble.hideButtons.call(this);
+				var editor = this;
+				var elem = $(this).parent().find('.bubble').find('.create-link');
+				elem.unbind('click');
 				elem.keydown(function(e) {
+					var elem = $(this);
 					utils.keyboard.isEnter(e, function() {
 						e.preventDefault();
 						var url = elem.val();
 						if (utils.validation.isUrl(url)) {
-							callback.call(w, url);
-							bubble.clear();
+							e.url = url;
+							events.commands.createLink(e, selection);
+							bubble.clear.call(editor);
 						}
 					});
-				}).show().focus().val('http://');
+				});
+				elem.bind('paste', function(e) {
+					var elem = $(this);
+					setTimeout(function() {
+						var text = elem.val();
+						console.log(text);
+						if (/http:\/\/https?:\/\//.test(text)) {
+							text = text.substring(7);
+							elem.val(text);
+						}
+					}, 1);
+				});
+				elem.show().focus().val('http://');
 			},
 			hideLinkInput: function() {
-				$('.bubble').find('.create-link').hide();
+				$(this).parent().find('.bubble').find('.create-link').hide();
 			}
 		},
 		actions = {
@@ -366,11 +391,13 @@
 					d.execCommand('underline', false);
 				},
 				anchor: function(e) {
+					e.preventDefault();
 					var s = utils.selection.save();
-					bubble.showLinkInput(function(url) {
-						utils.selection.restore(s);
-						d.execCommand('insertHTML', false, '<a href="' + url + '">' + utils.selection.getText() + '</a>');
-					});
+					bubble.showLinkInput.call(this, s);
+				},
+				createLink: function(e, s) {
+					utils.selection.restore(s);
+					d.execCommand('createLink', false, e.url);
 				},
 				h1: function(e) {
 					e.preventDefault();
