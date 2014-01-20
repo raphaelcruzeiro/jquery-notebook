@@ -109,3 +109,15 @@
     font-family: inherit;
     content: "h2";
 }
+
+.jquery-notebook .create-link {
+    display:none;
+    width: 272px;
+    height: 28px;
+    margin: 6px 0 0 10px;
+    background: none;
+    border: none;
+    outline: none;
+    color:#fff;
+    font-size: 14px;
+}
