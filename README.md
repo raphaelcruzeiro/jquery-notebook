@@ -32,5 +32,5 @@ $(document).ready(function(){
 That's it!  
 
 # Contributors
-[raphaelcruzeiro](https://github.com/raphaelcruzeiro/)
+[raphaelcruzeiro](https://github.com/raphaelcruzeiro/)   
 [otaviosoares](https://github.com/otaviosoares/)
