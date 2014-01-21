@@ -295,10 +295,10 @@
 				actions.setPlaceholder.call(elem, {});
 				actions.preserveElementFocus.call(elem);
 
-        if(options.autoFocus === true) {
-          var firstP  = elem.find('p:not(.placeholder)');
-          utils.cursor.set(elem, 0, firstP);
-        }
+				if (options.autoFocus === true) {
+					var firstP = elem.find('p:not(.placeholder)');
+					utils.cursor.set(elem, 0, firstP);
+				}
 			}
 		},
 		rawEvents = {
@@ -428,7 +428,9 @@
 					elem.find('*').each(function() {
 						var current = $(this);
 						$.each(this.attributes, function() {
-							current.removeAttr(this.name);
+							if (this.name !== 'class' || !current.hasClass('placeholder')) {
+								current.removeAttr(this.name);
+							}
 						});
 					});
 				}, 100);
@@ -436,16 +438,16 @@
 		};
 
 	$.fn.notebook = function(options) {
-    options = $.extend({}, $.fn.notebook.defaults, options);
+		options = $.extend({}, $.fn.notebook.defaults, options);
 		actions.prepare(this, options);
 		actions.bindEvents(this);
 		return this;
 	};
 
-  $.fn.notebook.defaults = {
-    autoFocus: false,
-    placeholder: 'Your text here...',
-    mode: 'inline'
-  };
+	$.fn.notebook.defaults = {
+		autoFocus: false,
+		placeholder: 'Your text here...',
+		mode: 'inline'
+	};
 
 })(jQuery, document, window);
