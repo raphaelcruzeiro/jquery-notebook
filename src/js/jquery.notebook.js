@@ -230,7 +230,6 @@
 					var elem = $(this);
 					setTimeout(function() {
 						var text = elem.val();
-						console.log(text);
 						if (/http:\/\/https?:\/\//.test(text)) {
 							text = text.substring(7);
 							elem.val(text);
@@ -288,19 +287,18 @@
 				}
 			},
 			prepare: function(elem, options) {
-				if (typeof options.mode != 'undefined') {
-					elem.attr('editor-mode', options.mode);
-				}
-				if (typeof options.placeholder != 'undefined') {
-					elem.attr('editor-placeholder', options.placeholder);
-				} else {
-					elem.attr('editor-placeholder', 'Your text here...');
-				}
+				elem.attr('editor-mode', options.mode);
+				elem.attr('editor-placeholder', options.placeholder);
 				elem.attr('contenteditable', true);
 				elem.css('position', 'relative');
 				elem.addClass('jquery-notebook editor');
 				actions.setPlaceholder.call(elem, {});
 				actions.preserveElementFocus.call(elem);
+
+        if(options.autoFocus === true) {
+          var firstP  = elem.find('p:not(.placeholder)');
+          utils.cursor.set(elem, 0, firstP);
+        }
 			}
 		},
 		rawEvents = {
@@ -430,7 +428,6 @@
 					elem.find('*').each(function() {
 						var current = $(this);
 						$.each(this.attributes, function() {
-							console.log(this.name);
 							current.removeAttr(this.name);
 						});
 					});
@@ -439,9 +436,16 @@
 		};
 
 	$.fn.notebook = function(options) {
+    options = $.extend({}, $.fn.notebook.defaults, options);
 		actions.prepare(this, options);
 		actions.bindEvents(this);
 		return this;
 	};
+
+  $.fn.notebook.defaults = {
+    autoFocus: false,
+    placeholder: 'Your text here...',
+    mode: 'inline'
+  };
 
 })(jQuery, document, window);
