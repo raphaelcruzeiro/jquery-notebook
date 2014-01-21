@@ -25,7 +25,6 @@
     position: absolute;
     z-index: 3;
     height: 43px;
-    width: 280px;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
@@ -93,7 +92,7 @@
     content: "\f0cd";
 }
 
-.jquery-notebook.bubble button.link:after {
+.jquery-notebook.bubble button.anchor:after {
     content: "\f0c1";
 }
 

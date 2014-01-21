@@ -21,13 +21,14 @@
 			command: false,
 			shift: false
 		},
-		modifiers = {
-			66: 'bold',
-			73: 'italic',
-			85: 'underline',
-			112: 'h1',
-			113: 'h2'
-		},
+    modifiers = {
+      66: 'bold',
+      73: 'italic',
+      85: 'underline',
+      112: 'h1',
+      113: 'h2'
+    },
+    options,
 		utils = {
 			keyboard: {
 				isCommand: function(e, callbackTrue, callbackFalse) {
@@ -159,16 +160,13 @@
 			},
 			buildMenu: function(editor, elem) {
 				var ul = utils.html.addTag(elem, 'ul', false, false);
-				for (var cmd in modifiers) {
+				for (var cmd in options.modifiers) {
 					var li = utils.html.addTag(ul, 'li', false, false);
 					var btn = utils.html.addTag(li, 'button', false, false);
-					btn.attr('editor-command', modifiers[cmd]);
-					btn.addClass(modifiers[cmd]);
+					btn.attr('editor-command', options.modifiers[cmd]);
+					btn.addClass(options.modifiers[cmd]);
 				}
-				var li = utils.html.addTag(ul, 'li', false, false);
-				var btn = utils.html.addTag(li, 'button', false, false);
-				btn.attr('editor-command', 'anchor');
-				btn.addClass('link');
+				
 				elem.find('button').click(function(e) {
 					e.preventDefault();
 					var cmd = $(this).attr('editor-command');
@@ -286,7 +284,8 @@
 					}
 				}
 			},
-			prepare: function(elem, options) {
+			prepare: function(elem, customOptions) {
+        options = customOptions;
 				elem.attr('editor-mode', options.mode);
 				elem.attr('editor-placeholder', options.placeholder);
 				elem.attr('contenteditable', true);
@@ -447,7 +446,8 @@
 	$.fn.notebook.defaults = {
 		autoFocus: false,
 		placeholder: 'Your text here...',
-		mode: 'inline'
+		mode: 'inline',
+    modifiers: ['bold', 'italic', 'underline', 'h1', 'h2', 'anchor']
 	};
 
 })(jQuery, document, window);
