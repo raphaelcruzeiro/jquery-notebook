@@ -174,19 +174,6 @@
 					var cmd = $(this).attr('editor-command');
 					events.commands[cmd].call(editor, e);
 				});
-				var linkArea = utils.html.addTag(elem, 'div', false, false);
-				linkArea.addClass('link-area');
-				var linkInput = utils.html.addTag(linkArea, 'input', false, false);
-				linkInput.attr({
-					type: 'text'
-				});
-				var closeBtn = utils.html.addTag(linkArea, 'button', false, false);
-				closeBtn.click(function(e) {
-					e.preventDefault();
-					var editor = $(this).closest('.editor');
-					$(this).closest('.link-area').hide();
-					$(this).closest('.bubble').find('ul').show();
-				});
 			},
 			show: function() {
 				var tag = $(this).parent().find('.bubble');
@@ -200,48 +187,6 @@
 			},
 			clear: function() {
 				$(this).parent().find('.bubble').hide();
-				bubble.hideLinkInput.call(this);
-				bubble.showButtons.call(this);
-			},
-			hideButtons: function() {
-				$(this).parent().find('.bubble').find('ul').hide();
-			},
-			showButtons: function() {
-				$(this).parent().find('.bubble').find('ul').show();
-			},
-			showLinkInput: function(selection) {
-				bubble.hideButtons.call(this);
-				var editor = this;
-				var elem = $(this).parent().find('.bubble').find('input[type=text]');
-				elem.unbind('click');
-				elem.keydown(function(e) {
-					var elem = $(this);
-					utils.keyboard.isEnter(e, function() {
-						e.preventDefault();
-						var url = elem.val();
-						if (utils.validation.isUrl(url)) {
-							e.url = url;
-							events.commands.createLink(e, selection);
-							bubble.clear.call(editor);
-						}
-					});
-				});
-				elem.bind('paste', function(e) {
-					var elem = $(this);
-					setTimeout(function() {
-						var text = elem.val();
-						console.log(text);
-						if (/http:\/\/https?:\/\//.test(text)) {
-							text = text.substring(7);
-							elem.val(text);
-						}
-					}, 1);
-				});
-				$(this).parent().find('.link-area').show();
-				elem.val('http://').focus();
-			},
-			hideLinkInput: function() {
-				$(this).parent().find('.bubble').find('.link-area').hide();
 			}
 		},
 		actions = {
@@ -402,12 +347,10 @@
 				},
 				anchor: function(e) {
 					e.preventDefault();
-					var s = utils.selection.save();
-					bubble.showLinkInput.call(this, s);
-				},
-				createLink: function(e, s) {
-					utils.selection.restore(s);
-					d.execCommand('createLink', false, e.url);
+					var url = w.prompt('Type the URL', 'http://');
+          if(utils.validation.isUrl(url)) {
+            d.execCommand('createLink', false, url);
+          }
 				},
 				h1: function(e) {
 					e.preventDefault();
