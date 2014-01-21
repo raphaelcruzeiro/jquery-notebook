@@ -230,7 +230,6 @@
 					var elem = $(this);
 					setTimeout(function() {
 						var text = elem.val();
-						console.log(text);
 						if (/http:\/\/https?:\/\//.test(text)) {
 							text = text.substring(7);
 							elem.val(text);
@@ -295,6 +294,11 @@
 				elem.addClass('jquery-notebook editor');
 				actions.setPlaceholder.call(elem, {});
 				actions.preserveElementFocus.call(elem);
+
+        if(options.autoFocus === true) {
+          var firstP  = elem.find('p:not(.placeholder)');
+          utils.cursor.set(elem, 0, firstP);
+        }
 			}
 		},
 		rawEvents = {
