@@ -213,7 +213,7 @@
 				bubble.hideButtons.call(this);
 				var editor = this;
 				var elem = $(this).parent().find('.bubble').find('input[type=text]');
-				elem.unbind('click');
+				elem.unbind('keydown');
 				elem.keydown(function(e) {
 					var elem = $(this);
 					utils.keyboard.isEnter(e, function() {
