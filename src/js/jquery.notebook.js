@@ -288,14 +288,8 @@
 				}
 			},
 			prepare: function(elem, options) {
-				if (typeof options.mode != 'undefined') {
-					elem.attr('editor-mode', options.mode);
-				}
-				if (typeof options.placeholder != 'undefined') {
-					elem.attr('editor-placeholder', options.placeholder);
-				} else {
-					elem.attr('editor-placeholder', 'Your text here...');
-				}
+				elem.attr('editor-mode', options.mode);
+				elem.attr('editor-placeholder', options.placeholder);
 				elem.attr('contenteditable', true);
 				elem.css('position', 'relative');
 				elem.addClass('jquery-notebook editor');
@@ -430,7 +424,6 @@
 					elem.find('*').each(function() {
 						var current = $(this);
 						$.each(this.attributes, function() {
-							console.log(this.name);
 							current.removeAttr(this.name);
 						});
 					});
@@ -439,9 +432,16 @@
 		};
 
 	$.fn.notebook = function(options) {
+    options = $.extend({}, $.fn.notebook.defaults, options);
 		actions.prepare(this, options);
 		actions.bindEvents(this);
 		return this;
 	};
+
+  $.fn.notebook.defaults = {
+    autoFocus: false,
+    placeholder: 'Your text here...',
+    mode: 'inline'
+  };
 
 })(jQuery, document, window);
