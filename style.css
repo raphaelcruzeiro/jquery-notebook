@@ -1,9 +1,19 @@
 html, body {
     font-family: "Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Verdana,sans-serif;
+    line-height: 25px;
 }
 
 .editor {
     width: 680px;
-    margin: auto;
+    margin: 100px auto;
     height: 700px;
+}
+
+.info {
+    width: 900px;
+    margin: 45px auto;
+    background: rgb(230, 255, 230);
+    padding: 15px;
+    border-radius: 3px;
+    color: rgb(33, 33, 33);
 }

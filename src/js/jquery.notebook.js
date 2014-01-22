@@ -21,14 +21,14 @@
 			command: false,
 			shift: false
 		},
-    modifiers = {
-      66: 'bold',
-      73: 'italic',
-      85: 'underline',
-      112: 'h1',
-      113: 'h2'
-    },
-    options,
+		modifiers = {
+			66: 'bold',
+			73: 'italic',
+			85: 'underline',
+			112: 'h1',
+			113: 'h2'
+		},
+		options,
 		utils = {
 			keyboard: {
 				isCommand: function(e, callbackTrue, callbackFalse) {
@@ -166,7 +166,6 @@
 					btn.attr('editor-command', options.modifiers[cmd]);
 					btn.addClass(options.modifiers[cmd]);
 				}
-				
 				elem.find('button').click(function(e) {
 					e.preventDefault();
 					var cmd = $(this).attr('editor-command');
@@ -285,7 +284,7 @@
 				}
 			},
 			prepare: function(elem, customOptions) {
-        options = customOptions;
+				options = customOptions;
 				elem.attr('editor-mode', options.mode);
 				elem.attr('editor-placeholder', options.placeholder);
 				elem.attr('contenteditable', true);
@@ -447,7 +446,7 @@
 		autoFocus: false,
 		placeholder: 'Your text here...',
 		mode: 'inline',
-    modifiers: ['bold', 'italic', 'underline', 'h1', 'h2', 'anchor']
+		modifiers: ['bold', 'italic', 'underline', 'h1', 'h2', 'anchor']
 	};
 
 })(jQuery, document, window);

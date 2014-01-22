@@ -2,21 +2,25 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <title>jQuery Notebook</title>
+        <title>jQuery Notebook Demo</title>
         <meta charset='utf-8'>
         <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="style.css">
         <link rel="stylesheet" type="text/css" href="src/js/jquery.notebook.css">
     </head>
     <body>
-        <h1></h1>
-        <div class="editor"></div>
+        <a href="https://github.com/raphaelcruzeiro/jquery-notebook"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a>
+        <div class="editor">
+            <h1>jQuery Notebook Demo</h1>
+            <p>A simple, clean and elegant text editor. Inspired on the awesomeness of <a href="http://medium.com" target="_blank">Medium</a>.</p>
+            <p>This jQuery plugin is released under the MIT license. You can check out the project and see how extremely simple it is to use this editor on your application by clicking on the Github ribbon on the top corner of this page. Feel free to contribute with this project by registering any bug that you may encounter as an issue on Github, and working on the issues that are already there. I'm looking forward to seeing your pull request!</p>
+            <p>Now, just take a time to test the editor. Yes, this <i>div</i> is the editor. Try to edit this text, select a part of this text and don't forget to try the basic text editor keyboard shortcuts.</p>
+        </div>
         <script type="text/javascript" src="src/js/libs/jquery-1.10.2.min.js"></script>
         <script type="text/javascript" src="src/js/jquery.notebook.js"></script>
         <script type="text/javascript">
             $(document).ready(function() {
                 $('.editor').notebook({
-                    mode: 'multiline',
                     autoFocus: true,
                     placeholder: 'Type something awesome...'
                 });
