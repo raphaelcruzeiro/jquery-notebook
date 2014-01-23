@@ -3,6 +3,10 @@ html, body {
     line-height: 25px;
 }
 
+p {
+    margin-top: 35px;
+}
+
 .editor {
     width: 680px;
     margin: 100px auto;
