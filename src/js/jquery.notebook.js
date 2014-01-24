@@ -26,7 +26,8 @@
 			73: 'italic',
 			85: 'underline',
 			112: 'h1',
-			113: 'h2'
+			113: 'h2',
+      122: 'undo'
 		},
 		options,
 		utils = {
@@ -432,7 +433,11 @@
 				h2: function(e) {
 					e.preventDefault();
 					d.execCommand('formatBlock', false, '<h2>');
-				}
+				},
+        undo: function(e) {
+          e.preventDefault();
+          d.execCommand('undo', false);
+        }
 			},
 			enterKey: function(e) {
 				if ($(this).attr('editor-mode') === 'inline') {
