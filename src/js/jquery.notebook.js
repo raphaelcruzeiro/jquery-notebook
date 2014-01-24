@@ -57,11 +57,11 @@
 						callback();
 					}
 				},
-        isArrow: function(e, callback) {
-          if(e.which >= 37 || e.which <= 40) {
-            callback();
-          }
-        }
+				isArrow: function(e, callback) {
+					if (e.which >= 37 || e.which <= 40) {
+						callback();
+					}
+				}
 			},
 			html: {
 				addTag: function(elem, tag, focus, editable) {
@@ -306,7 +306,7 @@
 		},
 		rawEvents = {
 			keydown: function(e) {
-        var elem = this;
+				var elem = this;
 				utils.keyboard.isCommand(e, function() {
 					cache.command = true;
 				}, function() {
@@ -323,18 +323,18 @@
 					}
 				});
 
-        if(cache.shift) {
-          utils.keyboard.isArrow.call(this, e, function() {
-            setTimeout(function() {
-              var txt = utils.selection.getText();
-              if (txt !== '') {
-                bubble.show.call(elem);
-              } else {
-                bubble.clear.call(elem);
-              }
-            }, 100);
-          });
-        }
+				if (cache.shift) {
+					utils.keyboard.isArrow.call(this, e, function() {
+						setTimeout(function() {
+							var txt = utils.selection.getText();
+							if (txt !== '') {
+								bubble.show.call(elem);
+							} else {
+								bubble.clear.call(elem);
+							}
+						}, 100);
+					});
+				}
 
 				if (e.which === 13) {
 					events.enterKey.call(this, e);
