@@ -25,6 +25,9 @@
     position: absolute;
     z-index: 3;
     height: 43px;
+    opacity: 1;
+    left: 0;
+    top: 0;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
@@ -38,6 +41,11 @@
     background-image: linear-gradient(to bottom,rgba(49,49,47,0.97),#262625);
     background-repeat: repeat-x;
     transition: 0.5s ease-in-out;
+}
+
+.jquery-notebook.bubble.active {
+    height: 43px;
+    opacity: 1;
 }
 
 .jquery-notebook.bubble:after {

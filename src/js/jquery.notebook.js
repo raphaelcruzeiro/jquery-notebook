@@ -14,6 +14,82 @@
 
 (function($, d, w) {
 
+	var transform = (function() {
+		var matrixToArray = function(str) {
+			if (!str || str == 'none') {
+				return [1, 0, 0, 1, 0, 0];
+			}
+			return str.match(/(-?[0-9\.]+)/g);
+		};
+
+		var getPreviousTransforms = function(elem) {
+			return elem.css('-webkit-transform') || elem.css('transform') || elem.css('-moz-transform') ||
+				elem.css('-o-transform') || elem.css('-ms-transform');
+		};
+
+		var getMatrix = function(elem) {
+			var previousTransform = getPreviousTransforms(elem);
+			return matrixToArray(previousTransform);
+		};
+
+		var applyTransform = function(elem, transform) {
+			elem.css('-webkit-transform', transform);
+			elem.css('-moz-transform', transform);
+			elem.css('-o-transform', transform);
+			elem.css('-ms-transform', transform);
+			elem.css('transform', transform);
+		};
+
+		var buildTransformString = function(matrix) {
+			return 'matrix(' + matrix[0] +
+				', ' + matrix[1] +
+				', ' + matrix[2] +
+				', ' + matrix[3] +
+				', ' + matrix[4] +
+				', ' + matrix[5] + ')';
+		};
+
+		var getTranslate = function(elem) {
+			var matrix = getMatrix(elem);
+			return {
+				x: parseInt(matrix[4]),
+				y: parseInt(matrix[5])
+			};
+		};
+
+		var scale = function(elem, _scale) {
+			var matrix = getMatrix(elem);
+			matrix[0] = matrix[3] = _scale;
+			var transform = buildTransformString(matrix);
+			applyTransform(elem, transform);
+		};
+
+		var translate = function(elem, x, y) {
+			var matrix = getMatrix(elem);
+			matrix[4] = x;
+			matrix[5] = y;
+			var transform = buildTransformString(matrix);
+			applyTransform(elem, transform);
+		};
+
+		var rotate = function(elem, deg) {
+			var matrix = getMatrix(elem);
+			var rad1 = deg * (Math.PI / 180);
+			var rad2 = rad1 * -1;
+			matrix[1] = rad1;
+			matrix[2] = rad2;
+			var transform = buildTransformString(matrix);
+			applyTransform(elem, transform);
+		};
+
+		return {
+			scale: scale,
+			translate: translate,
+			rotate: rotate,
+			getTranslate: getTranslate
+		};
+	})();
+
 	var isMac = w.navigator.platform == 'MacIntel',
 		mouseX = 0,
 		mouseY = 0,
@@ -79,10 +155,10 @@
 			},
 			cursor: {
 				set: function(editor, pos, elem) {
-          var range;
+					var range;
 					if (d.createRange) {
 						range = d.createRange();
-            var selection = w.getSelection(),
+						var selection = w.getSelection(),
 							lastChild = editor.children().last(),
 							length = lastChild.html().length - 1,
 							toModify = elem ? elem[0] : lastChild[0],
@@ -160,10 +236,11 @@
 					bubbleHeight = elem.height(),
 					offset = editor.offset().left,
 					pos = {
-						top: boundary.top - bubbleHeight - 8,
-						left: (boundary.left + boundary.width / 2) - bubbleWidth / 2
+						x: (boundary.left + boundary.width / 2) - bubbleWidth / 2,
+						y: boundary.top - bubbleHeight - 8
 					};
-				elem.css(pos);
+				transform.translate(elem, pos.x, pos.y);
+				elem.addClass('active');
 			},
 			buildMenu: function(editor, elem) {
 				var ul = utils.html.addTag(elem, 'ul', false, false);
