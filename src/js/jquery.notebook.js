@@ -79,9 +79,10 @@
 			},
 			cursor: {
 				set: function(editor, pos, elem) {
+          var range;
 					if (d.createRange) {
-						var range = d.createRange(),
-							selection = w.getSelection(),
+						range = d.createRange();
+            var selection = w.getSelection(),
 							lastChild = editor.children().last(),
 							length = lastChild.html().length - 1,
 							toModify = elem ? elem[0] : lastChild[0],
@@ -91,7 +92,7 @@
 						selection.removeAllRanges();
 						selection.addRange(range);
 					} else {
-						var range = d.body.createTextRange();
+						range = d.body.createTextRange();
 						range.moveToElementText(elem);
 						range.collapse(false);
 						range.select();
@@ -194,7 +195,7 @@
 			show: function() {
 				var tag = $(this).parent().find('.bubble');
 				if (!tag.length) {
-					var tag = utils.html.addTag($(this).parent(), 'div', false, false);
+					tag = utils.html.addTag($(this).parent(), 'div', false, false);
 					tag.addClass('jquery-notebook bubble');
 					bubble.buildMenu(this, tag);
 				}
@@ -298,7 +299,6 @@
 				elem.addClass('jquery-notebook editor');
 				actions.setPlaceholder.call(elem, {});
 				actions.preserveElementFocus.call(elem);
-
 				if (options.autoFocus === true) {
 					var firstP = elem.find('p:not(.placeholder)');
 					utils.cursor.set(elem, 0, firstP);

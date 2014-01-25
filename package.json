@@ -1,0 +1,37 @@
+{
+  "name": "jquery-notebook",
+  "version": "0.5.0",
+  "description": "A modern, simple and elegant WYSIWYG rich text editor.",
+  "main": "gulpfile.js",
+  "dependencies": {},
+  "devDependencies": {
+    "gulp-util": "~2.2.12",
+    "gulp": "~3.4.0",
+    "gulp-uglify": "~0.1.0",
+    "gulp-livereload": "~0.2.0",
+    "tiny-lr": "0.0.5",
+    "gulp-jshint": "~1.3.4",
+    "jshint-stylish": "~0.1.5",
+    "gulp-minify-css": "~0.2.0",
+    "gulp-rename": "~0.2.2",
+    "gulp-autoprefixer": "0.0.4",
+    "gulp-clean": "~0.2.4",
+    "connect": "~2.12.0",
+    "open": "0.0.4",
+    "connect-livereload": "~0.3.2",
+    "path": "~0.4.9"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/otaviosoares/jquery-notebook.git"
+  },
+  "author": "Raphael Cruzeiro",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/otaviosoares/jquery-notebook/issues"
+  },
+  "homepage": "https://github.com/otaviosoares/jquery-notebook"
+}
