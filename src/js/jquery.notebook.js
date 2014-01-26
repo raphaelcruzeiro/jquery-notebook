@@ -276,11 +276,11 @@
 					tag.addClass('jquery-notebook bubble');
 					bubble.buildMenu(this, tag);
 				}
-				tag.show();
+				tag.addClass('active');
 				bubble.updatePos($(this), tag);
 			},
 			clear: function() {
-				$(this).parent().find('.bubble').hide();
+				$(this).parent().find('.bubble').removeClass('active');
 				bubble.hideLinkInput.call(this);
 				bubble.showButtons.call(this);
 			},

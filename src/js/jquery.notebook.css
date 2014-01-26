@@ -28,6 +28,7 @@
     opacity: 1;
     left: 0;
     top: 0;
+    opacity: 0;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
