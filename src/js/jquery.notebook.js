@@ -280,7 +280,6 @@
 				bubble.updatePos($(this), tag);
 			},
 			clear: function() {
-				console.log('clear');
 				var elem = $(this).parent().find('.bubble');
 				if (!elem.hasClass('active')) return;
 				elem.removeClass('active');
@@ -417,6 +416,10 @@
 								bubble.clear.call(elem);
 							}
 						}, 100);
+					});
+				} else {
+					utils.keyboard.isArrow.call(this, e, function() {
+						bubble.clear.call(elem);
 					});
 				}
 
