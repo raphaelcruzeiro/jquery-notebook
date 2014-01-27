@@ -1,7 +1,10 @@
 /*
- * jQuery Notebook
+ * jQuery Notebook 0.5
  *
- * Copyright 2014, Raphael Cruzeiro = http://raphaelcruzeiro.eu/
+ * Copyright (c) 2014
+ * Raphael Cruzeiro - http://raphaelcruzeiro.eu/
+ * Otávio Soares
+ *
  * Released under the MIT License
  * http://opensource.org/licenses/MIT
  *
