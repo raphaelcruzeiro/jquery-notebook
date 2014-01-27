@@ -282,10 +282,12 @@
 			clear: function() {
 				var elem = $(this).parent().find('.bubble');
 				if (!elem.hasClass('active')) return;
+				console.log('clear');
 				elem.removeClass('active');
 				bubble.hideLinkInput.call(this);
 				bubble.showButtons.call(this);
 				setTimeout(function() {
+					if (elem.hasClass('active')) return;
 					elem.hide();
 				}, 500)
 			},
@@ -468,19 +470,15 @@
 						return;
 					}
 				}
-				var s = utils.selection.save();
-				if (s.collapsed) {
-					bubble.clear.call(elem);
-				}
 			},
 			mouseUp: function(e) {
 				var elem = this;
 				setTimeout(function() {
-					var txt = utils.selection.getText();
-					if (txt !== '') {
-						bubble.show.call(elem);
-					} else {
+					var s = utils.selection.save();
+					if (s.collapsed) {
 						bubble.clear.call(elem);
+					} else {
+						bubble.show.call(elem);
 					}
 				}, 50);
 			},
