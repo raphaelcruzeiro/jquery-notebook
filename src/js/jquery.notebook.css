@@ -24,8 +24,8 @@
 .jquery-notebook.bubble {
     position: absolute;
     z-index: 3;
-    height: 43px;
     opacity: 1;
+    height: 43px;
     left: 0;
     top: 0;
     opacity: 0;
@@ -45,7 +45,6 @@
 }
 
 .jquery-notebook.bubble.active {
-    height: 43px;
     opacity: 1;
 }
 

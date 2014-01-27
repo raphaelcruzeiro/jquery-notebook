@@ -240,7 +240,6 @@
 						y: boundary.top - bubbleHeight - 8
 					};
 				transform.translate(elem, pos.x, pos.y);
-				elem.addClass('active');
 			},
 			buildMenu: function(editor, elem) {
 				var ul = utils.html.addTag(elem, 'ul', false, false);
@@ -276,13 +275,20 @@
 					tag.addClass('jquery-notebook bubble');
 					bubble.buildMenu(this, tag);
 				}
+				tag.show();
 				tag.addClass('active');
 				bubble.updatePos($(this), tag);
 			},
 			clear: function() {
-				$(this).parent().find('.bubble').removeClass('active');
+				console.log('clear');
+				var elem = $(this).parent().find('.bubble');
+				if (!elem.hasClass('active')) return;
+				elem.removeClass('active');
 				bubble.hideLinkInput.call(this);
 				bubble.showButtons.call(this);
+				setTimeout(function() {
+					elem.hide();
+				}, 500)
 			},
 			hideButtons: function() {
 				$(this).parent().find('.bubble').find('ul').hide();
@@ -459,7 +465,10 @@
 						return;
 					}
 				}
-				bubble.clear.call(elem);
+				var s = utils.selection.save();
+				if (s.collapsed) {
+					bubble.clear.call(elem);
+				}
 			},
 			mouseUp: function(e) {
 				var elem = this;
