@@ -17,6 +17,12 @@
 
 (function($, d, w) {
 
+    /*
+     * This module deals with the CSS transforms. As it is not possible to easily
+     * combine the transform functions with JavaScript this module abstract those
+     * functions and generates a raw transform matrix, combining the new transform
+     * with the others that were previously applied to the element.
+     */
     var transform = (function() {
         var matrixToArray = function(str) {
             if (!str || str == 'none') {
@@ -231,6 +237,9 @@
             }
         },
         bubble = {
+            /*
+             * This is called to position the bubble above the selection.
+             */
             updatePos: function(editor, elem) {
                 var sel = w.getSelection(),
                     range = sel.getRangeAt(0),
@@ -244,6 +253,9 @@
                     };
                 transform.translate(elem, pos.x, pos.y);
             },
+            /*
+             * Updates the bubble to set the active formats for the current selection.
+             */
             updateState: function(editor, elem) {
                 elem.find('button').removeClass('active');
                 var sel = w.getSelection(),
@@ -261,9 +273,14 @@
                     elem.find('button.' + formatDict[format]).addClass('active');
                 }
             },
+            /*
+             * Recursively navigates upwards in the DOM to find all the format
+             * tags enclosing the selection.
+             */
             checkForFormatting: function(currentNode, formats) {
                 var validFormats = ['b', 'i', 'u', 'h1', 'h2', 'a'];
-                if (currentNode.nodeName === '#text' || validFormats.indexOf(currentNode.nodeName.toLowerCase()) != -1) {
+                if (currentNode.nodeName === '#text' ||
+                    validFormats.indexOf(currentNode.nodeName.toLowerCase()) != -1) {
                     if (currentNode.nodeName != '#text') {
                         formats.push(currentNode.nodeName.toLowerCase());
                     }
