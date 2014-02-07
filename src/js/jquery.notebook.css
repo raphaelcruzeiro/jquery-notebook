@@ -88,6 +88,10 @@
     cursor: pointer;
 }
 
+.jquery-notebook.bubble button.active {
+    color: rgb(30, 210, 40);
+}
+
 .jquery-notebook.bubble button.bold:after {
     content: "\f032";
 }
