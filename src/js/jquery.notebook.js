@@ -570,8 +570,8 @@
                 },
                 h1: function(e) {
                     e.preventDefault();
-                    if ($(window.getSelection().anchorNode.parentNode).is("h1")) {
-                        d.execCommand('formatBlock', false, "<p>");
+                    if ($(window.getSelection().anchorNode.parentNode).is('h1')) {
+                        d.execCommand('formatBlock', false, '<p>');
                     }
                     else {
                         d.execCommand('formatBlock', false, '<h1>');
@@ -580,8 +580,8 @@
                 },
                 h2: function(e) {
                     e.preventDefault();
-                    if ($(window.getSelection().anchorNode.parentNode).is("h2")) {
-                        d.execCommand('formatBlock', false, "<p>");
+                    if ($(window.getSelection().anchorNode.parentNode).is('h2')) {
+                        d.execCommand('formatBlock', false, '<p>');
                     }
                     else {
                         d.execCommand('formatBlock', false, '<h2>');
