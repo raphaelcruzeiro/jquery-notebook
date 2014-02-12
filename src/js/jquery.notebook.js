@@ -333,7 +333,6 @@
             clear: function() {
                 var elem = $(this).parent().find('.bubble');
                 if (!elem.hasClass('active')) return;
-                console.log('clear');
                 elem.removeClass('active');
                 bubble.hideLinkInput.call(this);
                 bubble.showButtons.call(this);
