@@ -360,6 +360,7 @@
                 bubble.hideButtons.call(this);
                 var editor = this;
                 var elem = $(this).parent().find('.bubble').find('input[type=text]');
+                var hasLink = elem.closest('.jquery-notebook').find('button.anchor').hasClass('active');
                 elem.unbind('keydown');
                 elem.keydown(function(e) {
                     var elem = $(this);
@@ -369,6 +370,9 @@
                         if (utils.validation.isUrl(url)) {
                             e.url = url;
                             events.commands.createLink(e, selection);
+                            bubble.clear.call(editor);
+                        } else if(url === '' && hasLink) {
+                            events.commands.removeLink(e, selection);
                             bubble.clear.call(editor);
                         }
                     });
@@ -575,6 +579,14 @@
                     utils.selection.restore(s);
                     d.execCommand('createLink', false, e.url);
                     bubble.update.call(this);
+                },
+                removeLink: function(e, s) {
+                    var el = utils.selection.getContainer(s);
+                    // Find anchor tag
+                    if(el.nodeName.toLowerCase() != 'a') {
+                        el = $(el).closest("a")[0];
+                    }
+                    $(el.firstChild).unwrap();
                 },
                 h1: function(e) {
                     e.preventDefault();
