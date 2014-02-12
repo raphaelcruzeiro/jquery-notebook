@@ -614,7 +614,7 @@
     $.fn.notebook.defaults = {
         autoFocus: false,
         placeholder: 'Your text here...',
-        mode: 'inline',
+        mode: 'multiline',
         modifiers: ['bold', 'italic', 'underline', 'h1', 'h2', 'anchor']
     };
 
