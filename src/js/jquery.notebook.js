@@ -389,11 +389,8 @@
                 });
                 var linkText = 'http://';
                 if(hasLink) {
-                    var anchor = utils.selection.getContainer(selection);
-                    if(anchor.nodeName.toLowerCase() != 'a') {
-                        anchor = $(anchor).closest('a');
-                    }
-                    linkText = $(anchor).prop('href') || linkText;
+                    var anchor = $(utils.selection.getContainer(selection)).closest('a');
+                    linkText = anchor.prop('href') || linkText;
                 }
                 $(this).parent().find('.link-area').show();
                 elem.val(linkText).focus();
@@ -589,12 +586,8 @@
                     bubble.update.call(this);
                 },
                 removeLink: function(e, s) {
-                    var el = utils.selection.getContainer(s);
-                    // Find anchor tag
-                    if(el.nodeName.toLowerCase() != 'a') {
-                        el = $(el).closest("a")[0];
-                    }
-                    $(el.firstChild).unwrap();
+                    var el = $(utils.selection.getContainer(s)).closest('a');
+                    el.contents().first().unwrap();
                 },
                 h1: function(e) {
                     e.preventDefault();
