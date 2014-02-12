@@ -569,12 +569,22 @@
                 },
                 h1: function(e) {
                     e.preventDefault();
-                    d.execCommand('formatBlock', false, '<h1>');
+                    if ($(window.getSelection().anchorNode.parentNode).is('h1')) {
+                        d.execCommand('formatBlock', false, '<p>');
+                    }
+                    else {
+                        d.execCommand('formatBlock', false, '<h1>');
+                    }
                     bubble.update.call(this);
                 },
                 h2: function(e) {
                     e.preventDefault();
-                    d.execCommand('formatBlock', false, '<h2>');
+                    if ($(window.getSelection().anchorNode.parentNode).is('h2')) {
+                        d.execCommand('formatBlock', false, '<p>');
+                    }
+                    else {
+                        d.execCommand('formatBlock', false, '<h2>');
+                    }
                     bubble.update.call(this);
                 },
                 undo: function(e) {
