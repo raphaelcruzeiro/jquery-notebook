@@ -387,8 +387,16 @@
                         }
                     }, 1);
                 });
+                var linkText = 'http://';
+                if(hasLink) {
+                    var anchor = utils.selection.getContainer(selection);
+                    if(anchor.nodeName.toLowerCase() != 'a') {
+                        anchor = $(anchor).closest('a');
+                    }
+                    linkText = $(anchor).prop('href') || linkText;
+                }
                 $(this).parent().find('.link-area').show();
-                elem.val('http://').focus();
+                elem.val(linkText).focus();
             },
             hideLinkInput: function() {
                 $(this).parent().find('.bubble').find('.link-area').hide();
