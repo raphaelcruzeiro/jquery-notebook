@@ -228,6 +228,14 @@
                     } else if (document.selection) { // IE?
                         document.selection.empty();
                     }
+                },
+                getContainer: function(sel) {
+                    if(w.getSelection && sel && sel.commonAncestorContainer) {
+                        return sel.commonAncestorContainer;
+                    } else if(d.selection && sel && sel.parentElement) {
+                        return sel.parentElement();
+                    }
+                    return null;
                 }
             },
             validation: {
