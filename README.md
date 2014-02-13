@@ -2,7 +2,7 @@
 **A simple, clean and elegant WYSIWYG rich text editor for web aplications**   
 **Note:** Check out the fully functional demo and examples [here](http://raphaelcruzeiro.github.io/jquery-notebook/).
 # Usage
-**Prerequisites:** jQury-Notebook's default styling uses [FontAwesome](http://fontawesome.io/) draw the icons on the _context bubble_. You can download FontAwesome [here](http://fontawesome.io/assets/font-awesome-4.0.3.zip) or link to the CDN.
+**Prerequisites:** jQuery-Notebook's default styling uses [FontAwesome](http://fontawesome.io/) draw the icons on the _context bubble_. You can download FontAwesome [here](http://fontawesome.io/assets/font-awesome-4.0.3.zip) or link to the CDN.
 
 ##### Add the FontAwesome css and jQuery-Notebook css to you page _head_:   
 
@@ -34,4 +34,8 @@ That's it!
 
 # Contributors
 [raphaelcruzeiro](https://github.com/raphaelcruzeiro/)   
-[otaviosoares](https://github.com/otaviosoares/)
+[otaviosoares](https://github.com/otaviosoares/)   
+[slahn](https://github.com/slahn)   
+[TrevorHinesley](https://github.com/TrevorHinesley)   
+[cbartlett](https://github.com/cbartlett)   
+[penman](https://github.com/penman)   
