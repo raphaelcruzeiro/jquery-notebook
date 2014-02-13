@@ -30,6 +30,28 @@ $(document).ready(function(){
 });
 ```   
 
+# Available Commands
+
+- Ctrl/Command B - Bold
+- Ctrl/Command I - Italic
+- Ctrl/Command U - Underline
+- Ctrl/Command F1 - Header 1
+- Ctrl/Command F2 - Header 2
+- Ctrl/Command Z - Undo
+
+# Options
+
+These are the supported options and their default values:
+
+```js
+$.fn.notebook.defaults = {
+  autoFocus: false,
+  placeholder: 'Your text here...',
+  mode: 'multiline', // multiline or inline
+  modifiers: ['bold', 'italic', 'underline', 'h1', 'h2', 'ol', 'ul', 'anchor']
+};
+```
+
 That's it!  
 
 # Contributors
@@ -38,4 +60,4 @@ That's it!
 [slahn](https://github.com/slahn)   
 [TrevorHinesley](https://github.com/TrevorHinesley)   
 [cbartlett](https://github.com/cbartlett)   
-[penman](https://github.com/penman)   
+[penman](https://github.com/penman)
