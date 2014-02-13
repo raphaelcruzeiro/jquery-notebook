@@ -257,7 +257,7 @@
                     offset = editor.offset().left,
                     pos = {
                         x: (boundary.left + boundary.width / 2) - bubbleWidth / 2,
-                        y: boundary.top - bubbleHeight - 8
+                        y: boundary.top - bubbleHeight - 8 + $(document).scrollTop()
                     };
                 transform.translate(elem, pos.x, pos.y);
             },
