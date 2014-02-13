@@ -34,8 +34,8 @@ That's it!
 
 # Contributors
 [raphaelcruzeiro](https://github.com/raphaelcruzeiro/)   
-[otaviosoares](https://github.com/otaviosoares/)
-[slahn](https://github.com/slahn)
-[TrevorHinesley](https://github.com/TrevorHinesley)
-[cbartlett](https://github.com/cbartlett)
-[penman](https://github.com/penman)
+[otaviosoares](https://github.com/otaviosoares/)   
+[slahn](https://github.com/slahn)   
+[TrevorHinesley](https://github.com/TrevorHinesley)   
+[cbartlett](https://github.com/cbartlett)   
+[penman](https://github.com/penman)   
