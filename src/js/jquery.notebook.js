@@ -230,9 +230,9 @@
                     }
                 },
                 getContainer: function(sel) {
-                    if(w.getSelection && sel && sel.commonAncestorContainer) {
+                    if (w.getSelection && sel && sel.commonAncestorContainer) {
                         return sel.commonAncestorContainer;
-                    } else if(d.selection && sel && sel.parentElement) {
+                    } else if (d.selection && sel && sel.parentElement) {
                         return sel.parentElement();
                     }
                     return null;
@@ -370,7 +370,7 @@
                             e.url = url;
                             events.commands.createLink(e, selection);
                             bubble.clear.call(editor);
-                        } else if(url === '' && hasLink) {
+                        } else if (url === '' && hasLink) {
                             events.commands.removeLink(e, selection);
                             bubble.clear.call(editor);
                         }
@@ -387,7 +387,7 @@
                     }, 1);
                 });
                 var linkText = 'http://';
-                if(hasLink) {
+                if (hasLink) {
                     var anchor = $(utils.selection.getContainer(selection)).closest('a');
                     linkText = anchor.prop('href') || linkText;
                 }
@@ -459,6 +459,11 @@
         rawEvents = {
             keydown: function(e) {
                 var elem = this;
+                if (cache.command && e.which === 65) {
+                    setTimeout(function() {
+                        bubble.show.call(elem);
+                    }, 50);
+                }
                 utils.keyboard.isCommand(e, function() {
                     cache.command = true;
                 }, function() {
@@ -592,8 +597,7 @@
                     e.preventDefault();
                     if ($(window.getSelection().anchorNode.parentNode).is('h1')) {
                         d.execCommand('formatBlock', false, '<p>');
-                    }
-                    else {
+                    } else {
                         d.execCommand('formatBlock', false, '<h1>');
                     }
                     bubble.update.call(this);
@@ -602,8 +606,7 @@
                     e.preventDefault();
                     if ($(window.getSelection().anchorNode.parentNode).is('h2')) {
                         d.execCommand('formatBlock', false, '<p>');
-                    }
-                    else {
+                    } else {
                         d.execCommand('formatBlock', false, '<h2>');
                     }
                     bubble.update.call(this);
