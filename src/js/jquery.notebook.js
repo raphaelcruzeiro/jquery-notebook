@@ -104,7 +104,8 @@
         mouseY = 0,
         cache = {
             command: false,
-            shift: false
+            shift: false,
+            isSelecting: false
         },
         modifiers = {
             66: 'bold',
@@ -410,6 +411,11 @@
                 elem.mouseup(rawEvents.mouseUp);
                 elem.mousemove(rawEvents.mouseMove);
                 elem.blur(rawEvents.blur);
+                $('body').mouseup(function(e) {
+                    if (e.target == e.currentTarget && cache.isSelecting) {
+                        rawEvents.mouseUp.call(elem, e);
+                    }
+                });
             },
             setPlaceholder: function(e) {
                 if (/^\s*$/.test($(this).text())) {
@@ -526,6 +532,7 @@
             },
             mouseClick: function(e) {
                 var elem = this;
+                cache.isSelecting = true;
                 if (e.button === 2) {
                     setTimeout(function() {
                         bubble.show.call(elem);
@@ -546,7 +553,9 @@
                 }
             },
             mouseUp: function(e) {
+                e.preventDefault();
                 var elem = this;
+                cache.isSelecting = false;
                 setTimeout(function() {
                     var s = utils.selection.save();
                     if (s.collapsed) {
