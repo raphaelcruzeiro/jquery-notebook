@@ -275,7 +275,8 @@
                     'h1': 'h1',
                     'h2': 'h2',
                     'a': 'anchor',
-                    'ul': 'ul'
+                    'ul': 'ul',
+                    'ol': 'ol'
                 };
                 for (var i = 0; i < formats.length; i++) {
                     var format = formats[i];
@@ -287,7 +288,7 @@
              * tags enclosing the selection.
              */
             checkForFormatting: function(currentNode, formats) {
-                var validFormats = ['b', 'i', 'u', 'h1', 'h2', 'a'];
+                var validFormats = ['b', 'i', 'u', 'h1', 'h2', 'ol', 'ul', 'li', 'a'];
                 if (currentNode.nodeName === '#text' ||
                     validFormats.indexOf(currentNode.nodeName.toLowerCase()) != -1) {
                     if (currentNode.nodeName != '#text') {
@@ -617,6 +618,11 @@
                     d.execCommand('insertUnorderedList', false);
                     bubble.update.call(this);
                 },
+                ol: function(e) {
+                    e.preventDefault();
+                    d.execCommand('insertOrderedList', false);
+                    bubble.update.call(this);
+                },
                 undo: function(e) {
                     e.preventDefault();
                     d.execCommand('undo', false);
@@ -654,7 +660,7 @@
         autoFocus: false,
         placeholder: 'Your text here...',
         mode: 'multiline',
-        modifiers: ['bold', 'italic', 'underline', 'h1', 'h2', 'ul', 'anchor']
+        modifiers: ['bold', 'italic', 'underline', 'h1', 'h2', 'ol', 'ul', 'anchor']
     };
 
 })(jQuery, document, window);
