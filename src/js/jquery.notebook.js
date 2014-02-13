@@ -228,6 +228,14 @@
                     } else if (document.selection) { // IE?
                         document.selection.empty();
                     }
+                },
+                getContainer: function(sel) {
+                    if(w.getSelection && sel && sel.commonAncestorContainer) {
+                        return sel.commonAncestorContainer;
+                    } else if(d.selection && sel && sel.parentElement) {
+                        return sel.parentElement();
+                    }
+                    return null;
                 }
             },
             validation: {
@@ -351,6 +359,7 @@
                 bubble.hideButtons.call(this);
                 var editor = this;
                 var elem = $(this).parent().find('.bubble').find('input[type=text]');
+                var hasLink = elem.closest('.jquery-notebook').find('button.anchor').hasClass('active');
                 elem.unbind('keydown');
                 elem.keydown(function(e) {
                     var elem = $(this);
@@ -360,6 +369,9 @@
                         if (utils.validation.isUrl(url)) {
                             e.url = url;
                             events.commands.createLink(e, selection);
+                            bubble.clear.call(editor);
+                        } else if(url === '' && hasLink) {
+                            events.commands.removeLink(e, selection);
                             bubble.clear.call(editor);
                         }
                     });
@@ -374,8 +386,13 @@
                         }
                     }, 1);
                 });
+                var linkText = 'http://';
+                if(hasLink) {
+                    var anchor = $(utils.selection.getContainer(selection)).closest('a');
+                    linkText = anchor.prop('href') || linkText;
+                }
                 $(this).parent().find('.link-area').show();
-                elem.val('http://').focus();
+                elem.val(linkText).focus();
             },
             hideLinkInput: function() {
                 $(this).parent().find('.bubble').find('.link-area').hide();
@@ -566,6 +583,10 @@
                     utils.selection.restore(s);
                     d.execCommand('createLink', false, e.url);
                     bubble.update.call(this);
+                },
+                removeLink: function(e, s) {
+                    var el = $(utils.selection.getContainer(s)).closest('a');
+                    el.contents().first().unwrap();
                 },
                 h1: function(e) {
                     e.preventDefault();
