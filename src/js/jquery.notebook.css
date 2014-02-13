@@ -122,6 +122,10 @@
     content: "h2";
 }
 
+.jquery-notebook.bubble button.ul:after {
+    font-family: inherit;
+    content: "\f0ca";
+}
 .jquery-notebook .link-area {
     display: none;
 }

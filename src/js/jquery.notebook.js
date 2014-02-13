@@ -266,7 +266,8 @@
                     'i': 'italic',
                     'h1': 'h1',
                     'h2': 'h2',
-                    'a': 'anchor'
+                    'a': 'anchor',
+                    'ul': 'ul'
                 };
                 for (var i = 0; i < formats.length; i++) {
                     var format = formats[i];
@@ -340,7 +341,7 @@
                 setTimeout(function() {
                     if (elem.hasClass('active')) return;
                     elem.hide();
-                }, 500)
+                }, 500);
             },
             hideButtons: function() {
                 $(this).parent().find('.bubble').find('ul').hide();
@@ -578,6 +579,11 @@
                     d.execCommand('formatBlock', false, '<h2>');
                     bubble.update.call(this);
                 },
+                ul: function(e) {
+                    e.preventDefault();
+                    d.execCommand('insertUnorderedList', false);
+                    bubble.update.call(this);
+                },
                 undo: function(e) {
                     e.preventDefault();
                     d.execCommand('undo', false);
@@ -615,7 +621,7 @@
         autoFocus: false,
         placeholder: 'Your text here...',
         mode: 'inline',
-        modifiers: ['bold', 'italic', 'underline', 'h1', 'h2', 'anchor']
+        modifiers: ['bold', 'italic', 'underline', 'h1', 'h2', 'ul', 'anchor']
     };
 
 })(jQuery, document, window);
