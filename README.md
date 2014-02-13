@@ -6,25 +6,25 @@
 
 ##### Add the FontAwesome css and jQuery-Notebook css to you page _head_:   
 
-```
+```html
 <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="src/js/jquery.notebook.css">
 ```
 
 ##### Add jquery and jquery-notebook.js to your page: 
 
-```
+```html
 <script type="text/javascript" src="src/js/libs/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="src/js/jquery.notebook.js"></script>
 ```
 
 ##### Create the editor:   
 
-```
+```html
 <div class="my-editor"></div>
 ```   
 
-```
+```js
 $(document).ready(function(){
     $('.my-editor').notebook();
 });
