@@ -427,6 +427,9 @@
                     $(this).find('.placeholder').remove();
                 }
             },
+            removePlaceholder: function(e) {
+                $(this).find('.placeholder').remove();
+            },
             preserveElementFocus: function() {
                 var anchorNode = w.getSelection() ? w.getSelection().anchorNode : d.activeElement;
                 if (anchorNode) {
@@ -522,9 +525,7 @@
                     cache.command = true;
                 });
                 actions.preserveElementFocus.call(this);
-                actions.setPlaceholder.call(this, {
-                    focus: true
-                });
+                actions.removePlaceholder.call(this);
             },
             focus: function(e) {
                 cache.command = false;
@@ -570,7 +571,9 @@
                 mouseY = e.pageY;
             },
             blur: function(e) {
-
+                actions.setPlaceholder.call(this, {
+                    focus: false
+                });
             }
         },
         events = {
