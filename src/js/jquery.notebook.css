@@ -30,9 +30,18 @@
     top: 0;
     opacity: 0;
     border-radius: 5px;
-    box-shadow: 2px 2px 2px -1px rgba(0,0,0,0.7),inset 0 0 1px rgba(255,255,255,0.07),inset 0 0 2px rgba(255,255,255,0.15000000000000002);
-    background: rgb(50, 50 ,50);
-    transition: 0.5s ease-in-out;
+    border: 1px solid #1C1C1B;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.2), inset 0 0 2px rgba(255,255,255,0.2); /* Bubble Shadows */
+    
+    background: rgb(55,55,53);
+	background: -moz-linear-gradient(top,  rgba(55,55,53,1) 0%, rgba(40,40,39,1) 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(55,55,53,1)), color-stop(100%,rgba(40,40,39,1)));
+	background: -webkit-linear-gradient(top,  rgba(55,55,53,1) 0%,rgba(40,40,39,1) 100%);
+	background: -o-linear-gradient(top,  rgba(55,55,53,1) 0%,rgba(40,40,39,1) 100%);
+	background: -ms-linear-gradient(top,  rgba(55,55,53,1) 0%,rgba(40,40,39,1) 100%);
+	background: linear-gradient(to bottom,  rgba(55,55,53,1) 0%,rgba(40,40,39,1) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#373735', endColorstr='#282827',GradientType=0 );
+    transition: 0.2s ease-in-out; /* Responsible for all animations */
 }
 
 .jquery-notebook.bubble.active {
@@ -53,8 +62,8 @@
     -ms-transform: rotate(45deg);
     -o-transform: rotate(45deg);
     transform: rotate(45deg);
-    background: rgb(50, 50, 50);
-    box-shadow: 0 0 2px #262625;
+    background: #282827;
+    box-shadow: 2px 2px 1px rgba(0,0,0,0.1); /* Triangle shadow */
 }
 
 .jquery-notebook.bubble ul {
@@ -80,7 +89,7 @@
 }
 
 .jquery-notebook.bubble button.active {
-    color: rgb(30, 210, 40);
+    color: #60D778;
 }
 
 .jquery-notebook.bubble button.bold:after {

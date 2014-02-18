@@ -32,23 +32,32 @@
         };
 
         var getPreviousTransforms = function(elem) {
+        
+        	// Return current transform
+        
             return elem.css('-webkit-transform') || elem.css('transform') || elem.css('-moz-transform') ||
                 elem.css('-o-transform') || elem.css('-ms-transform');
         };
 
         var getMatrix = function(elem) {
+        
+        	//Get current transform at time of translation
+        	
             var previousTransform = getPreviousTransforms(elem);
             return matrixToArray(previousTransform);
         };
-
+		
         var applyTransform = function(elem, transform) {
+        
+        	//Move the element
+        	
             elem.css('-webkit-transform', transform);
             elem.css('-moz-transform', transform);
             elem.css('-o-transform', transform);
             elem.css('-ms-transform', transform);
             elem.css('transform', transform);
         };
-
+		
         var buildTransformString = function(matrix) {
             return 'matrix(' + matrix[0] +
                 ', ' + matrix[1] +
@@ -74,6 +83,7 @@
         };
 
         var translate = function(elem, x, y) {
+        	console.log("translate!");
             var matrix = getMatrix(elem);
             matrix[4] = x;
             matrix[5] = y;
