@@ -23,6 +23,7 @@
      * functions and generates a raw transform matrix, combining the new transform
      * with the others that were previously applied to the element.
      */
+     
     var transform = (function() {
         var matrixToArray = function(str) {
             if (!str || str == 'none') {
@@ -40,7 +41,7 @@
             var previousTransform = getPreviousTransforms(elem);
             return matrixToArray(previousTransform);
         };
-
+		
         var applyTransform = function(elem, transform) {
             elem.css('-webkit-transform', transform);
             elem.css('-moz-transform', transform);
@@ -48,7 +49,7 @@
             elem.css('-ms-transform', transform);
             elem.css('transform', transform);
         };
-
+		
         var buildTransformString = function(matrix) {
             return 'matrix(' + matrix[0] +
                 ', ' + matrix[1] +
@@ -273,6 +274,7 @@
                 var formatDict = {
                     'b': 'bold',
                     'i': 'italic',
+                    'u': 'underline',
                     'h1': 'h1',
                     'h2': 'h2',
                     'a': 'anchor',
@@ -334,8 +336,13 @@
                 }
                 tag.show();
                 bubble.updateState(this, tag);
+                if (!tag.hasClass('active')) {
+	                tag.addClass('jump');
+                } else {
+	                tag.removeClass('jump');
+                }
+				bubble.updatePos($(this), tag);  
                 tag.addClass('active');
-                bubble.updatePos($(this), tag);
             },
             update: function() {
                 var tag = $(this).parent().find('.bubble');
