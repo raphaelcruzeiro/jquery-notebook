@@ -41,11 +41,17 @@
 	background: -ms-linear-gradient(top,  rgba(55,55,53,1) 0%,rgba(40,40,39,1) 100%);
 	background: linear-gradient(to bottom,  rgba(55,55,53,1) 0%,rgba(40,40,39,1) 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#373735', endColorstr='#282827',GradientType=0 );
-    transition: 0.2s ease-in-out; /* Responsible for all animations */
+    transition: 0.15s ease-in-out;
+    -webkit-transition: 0.15s ease-in-out;
 }
 
 .jquery-notebook.bubble.active {
     opacity: 1;
+}
+
+.jquery-notebook.bubble.jump {
+    transition: opacity 0.15s;
+    -webkit-transition: opacity 0.15s;
 }
 
 .jquery-notebook.bubble:after {
@@ -53,10 +59,10 @@
     display: block;
     position: absolute;
     left: 50%;
-    bottom: -3px;
-    margin-left: -4px;
-    width: 8px;
-    height: 8px;
+    bottom: -6px;
+    margin-left: -8px;
+    width: 16px;
+    height: 16px;
     -webkit-transform: rotate(45deg);
     -moz-transform: rotate(45deg);
     -ms-transform: rotate(45deg);
