@@ -33,28 +33,16 @@
         };
 
         var getPreviousTransforms = function(elem) {
-        
-        	// Return current transform
-        	//console.log("gePreviousTransforms");
-        
             return elem.css('-webkit-transform') || elem.css('transform') || elem.css('-moz-transform') ||
                 elem.css('-o-transform') || elem.css('-ms-transform');
         };
 
         var getMatrix = function(elem) {
-        
-        	//Get current transform at time of translation
-        	//console.log("getMatrix");
-        	
             var previousTransform = getPreviousTransforms(elem);
             return matrixToArray(previousTransform);
         };
 		
         var applyTransform = function(elem, transform) {
-        
-        	//Apply the transform
-        	//console.log("applyTransform");
-        	
             elem.css('-webkit-transform', transform);
             elem.css('-moz-transform', transform);
             elem.css('-o-transform', transform);
@@ -63,9 +51,6 @@
         };
 		
         var buildTransformString = function(matrix) {
-        
-        	//console.log("buildTransformString");
-        
             return 'matrix(' + matrix[0] +
                 ', ' + matrix[1] +
                 ', ' + matrix[2] +
@@ -75,9 +60,6 @@
         };
 
         var getTranslate = function(elem) {
-        
-        	//console.log("getTranslate");
-        
             var matrix = getMatrix(elem);
             return {
                 x: parseInt(matrix[4]),
@@ -86,9 +68,6 @@
         };
 
         var scale = function(elem, _scale) {
-        
-        	//console.log("scale");
-        
             var matrix = getMatrix(elem);
             matrix[0] = matrix[3] = _scale;
             var transform = buildTransformString(matrix);
@@ -96,9 +75,6 @@
         };
 
         var translate = function(elem, x, y) {
-        
-        	//console.log("translate");
-        	
             var matrix = getMatrix(elem);
             matrix[4] = x;
             matrix[5] = y;
@@ -107,9 +83,6 @@
         };
 
         var rotate = function(elem, deg) {
-        	
-        	//console.log("rotate");
-        	
             var matrix = getMatrix(elem);
             var rad1 = deg * (Math.PI / 180);
             var rad2 = rad1 * -1;
