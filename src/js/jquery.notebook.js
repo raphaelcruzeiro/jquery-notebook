@@ -526,6 +526,16 @@
                 });
                 actions.preserveElementFocus.call(this);
                 actions.removePlaceholder.call(this);
+
+                /*
+                 * This breaks the undo when the whole text is deleted but so far
+                 * it is the only way that I fould to solve the more serious bug
+                 * that the editor was losing the p elements after deleting the whole text
+                 */
+                if (/^\s*$/.test($(this).text())) {
+                    $(this).empty();
+                    utils.html.addTag($(this), 'p', true, true);
+                }
             },
             focus: function(e) {
                 cache.command = false;
