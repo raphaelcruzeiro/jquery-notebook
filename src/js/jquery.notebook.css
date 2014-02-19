@@ -77,6 +77,7 @@
     color: white;
     font-size: 14pt;
     cursor: pointer;
+    margin-top:0;
 }
 
 .jquery-notebook.bubble button.active {
