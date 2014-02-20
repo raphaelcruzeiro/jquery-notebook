@@ -22,7 +22,7 @@
 }
 
 .jquery-notebook.bubble {
-    position: absolute;
+    position: fixed;
     z-index: 3;
     opacity: 1;
     height: 43px;
