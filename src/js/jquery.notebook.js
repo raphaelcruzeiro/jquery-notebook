@@ -100,24 +100,307 @@
     };
   })();
 
-  var isMac = w.navigator.platform == 'MacIntel',
-    mouseX = 0,
-    mouseY = 0,
-    cache = {
-      command: false,
-      shift: false,
-      isSelecting: false
-    },
-    modifiers = {
-      66: 'bold',
-      73: 'italic',
-      85: 'underline',
-      112: 'h1',
-      113: 'h2',
-      122: 'undo'
-    },
-    options,
-    utils = {
+  var Notebook = function(element, options) {
+    var self = this,
+      mouseX = 0,
+      mouseY = 0,
+      cache = {
+        command: false,
+        shift: false,
+        isSelecting: false
+      },
+      modifiers = {
+        66: 'bold',
+        73: 'italic',
+        85: 'underline',
+        112: 'h1',
+        113: 'h2',
+        122: 'undo'
+      };
+
+    $.extend(self, {
+      init: function() {
+        self.element = $(element);
+        self.options = options;
+        self.utils = new Utils();
+        self.bubble = new notebookBubble(self);
+
+        self.prepare();
+        self.bindEvents();
+      },
+      bindEvents: function(elem) {
+        self.element.keydown(self.rawEvents.keydown);
+        self.element.keyup(self.rawEvents.keyup);
+        self.element.focus(self.rawEvents.focus);
+        self.element.bind('paste', self.events.paste);
+        self.element.mousedown(self.rawEvents.mouseClick);
+        self.element.mouseup(self.rawEvents.mouseUp);
+        self.element.mousemove(self.rawEvents.mouseMove);
+        self.element.blur(self.rawEvents.blur);
+        $('body').mouseup(function(e) {
+          if (e.target == e.currentTarget && cache.isSelecting) {
+            self.rawEvents.mouseUp(e);
+          }
+        });
+      },
+      setPlaceholder: function(e) {
+        if (/^\s*$/.test(self.element.text())) {
+          self.element.empty();
+          var placeholder = self.utils.html.addTag(self.element, 'p').addClass('placeholder');
+          placeholder.append(self.element.attr('editor-placeholder'));
+          self.utils.html.addTag(self.element, 'p', typeof e.focus != 'undefined' ? e.focus : false, true);
+        } else {
+          self.element.find('.placeholder').remove();
+        }
+      },
+      removePlaceholder: function(e) {
+        self.element.find('.placeholder').remove();
+      },
+      preserveElementFocus: function() {
+        var anchorNode = w.getSelection() ? w.getSelection().anchorNode : d.activeElement;
+        if (anchorNode) {
+          var current = anchorNode.parentNode,
+            diff = current !== cache.focusedElement,
+            children = self.element[0].children,
+            elementIndex = 0;
+          if (current === self.element[0]) {
+            current = anchorNode;
+          }
+          for (var i = 0; i < children.length; i++) {
+            if (current === children[i]) {
+              elementIndex = i;
+              break;
+            }
+          }
+          if (diff) {
+            cache.focusedElement = current;
+            cache.focusedElementIndex = elementIndex;
+          }
+        }
+      },
+      prepare: function() {
+        self.element.attr('editor-mode', self.options.mode);
+        self.element.attr('editor-placeholder', self.options.placeholder);
+        self.element.attr('contenteditable', true);
+        self.element.css('position', 'relative');
+        self.element.addClass('jquery-notebook editor');
+        self.setPlaceholder({});
+        self.preserveElementFocus();
+        if (options.autoFocus === true) {
+          var firstP = self.element.find('p:not(.placeholder)');
+          self.utils.cursor.set(self.element, 0, firstP);
+        }
+      },
+      rawEvents: {
+        keydown: function(e) {
+          var elem = this;
+          if (cache.command && e.which === 65) {
+            setTimeout(function() {
+              self.bubble.show();
+            }, 50);
+          }
+          self.utils.keyboard.isCommand(e, function() {
+            cache.command = true;
+          }, function() {
+            cache.command = false;
+          });
+          self.utils.keyboard.isShift(e, function() {
+            cache.shift = true;
+          }, function() {
+            cache.shift = false;
+          });
+          self.utils.keyboard.isModifier(e, function(modifier) {
+            if (cache.command) {
+              self.events.commands[modifier](e);
+            }
+          });
+
+          if (cache.shift) {
+            self.utils.keyboard.isArrow(e, function() {
+              setTimeout(function() {
+                var txt = self.utils.selection.getText();
+                if (txt !== '') {
+                  self.bubble.show();
+                } else {
+                  self.bubble.clear();
+                }
+              }, 100);
+            });
+          } else {
+            self.utils.keyboard.isArrow(e, function() {
+              self.bubble.clear();
+            });
+          }
+
+          if (e.which === 13) {
+            self.events.enterKey();
+          }
+          if (e.which === 27) {
+            self.bubble.clear();
+          }
+          if (e.which === 86) {
+            this.events.paste(e);
+          }
+        },
+        keyup: function(e) {
+          self.utils.keyboard.isCommand(e, function() {
+            cache.command = false;
+          }, function() {
+            cache.command = true;
+          });
+          self.preserveElementFocus();
+          self.removePlaceholder();
+
+          /*
+           * This breaks the undo when the whole text is deleted but so far
+           * it is the only way that I fould to solve the more serious bug
+           * that the editor was losing the p elements after deleting the whole text
+           */
+          if (/^\s*$/.test($(this).text())) {
+            $(this).empty();
+            self.utils.html.addTag($(this), 'p', true, true);
+          }
+        },
+        focus: function(e) {
+          cache.command = false;
+          cache.shift = false;
+        },
+        mouseClick: function(e) {
+          var elem = this;
+          cache.isSelecting = true;
+          if (e.button === 2) {
+            setTimeout(function() {
+              self.bubble.show();
+            }, 50);
+            e.preventDefault();
+            return;
+          }
+          if (self.bubble.isVisible()) {
+            var bubbleTag = self.bubble.element,
+              bubbleX = bubbleTag.offset().left,
+              bubbleY = bubbleTag.offset().top,
+              bubbleWidth = bubbleTag.width(),
+              bubbleHeight = bubbleTag.height();
+            if (mouseX > bubbleX && mouseX < bubbleX + bubbleWidth &&
+              mouseY > bubbleY && mouseY < bubbleY + bubbleHeight) {
+              return;
+            }
+          }
+        },
+        mouseUp: function(e) {
+          e.preventDefault();
+          cache.isSelecting = false;
+          setTimeout(function() {
+            var s = self.utils.selection.save();
+            if (s.collapsed) {
+              self.bubble.clear();
+            } else {
+              self.bubble.show();
+            }
+          }, 50);
+        },
+        mouseMove: function(e) {
+          mouseX = e.pageX;
+          mouseY = e.pageY;
+        },
+        blur: function(e) {
+          self.setPlaceholder({
+            focus: false
+          });
+        }
+      },
+      events: {
+        commands: {
+          bold: function(e) {
+            e.preventDefault();
+            d.execCommand('bold', false);
+            self.bubble.update();
+          },
+          italic: function(e) {
+            e.preventDefault();
+            d.execCommand('italic', false);
+            self.bubble.update();
+          },
+          underline: function(e) {
+            e.preventDefault();
+            d.execCommand('underline', false);
+            self.bubble.update();
+          },
+          anchor: function(e) {
+            e.preventDefault();
+            var s = self.utils.selection.save();
+            self.bubble.showLinkInput(s);
+          },
+          createLink: function(e, s) {
+            self.utils.selection.restore(s);
+            d.execCommand('createLink', false, e.url);
+            self.bubble.update();
+          },
+          removeLink: function(e, s) {
+            var el = $(self.utils.selection.getContainer(s)).closest('a');
+            el.contents().first().unwrap();
+          },
+          h1: function(e) {
+            e.preventDefault();
+            if ($(window.getSelection().anchorNode.parentNode).is('h1')) {
+              d.execCommand('formatBlock', false, '<p>');
+            } else {
+              d.execCommand('formatBlock', false, '<h1>');
+            }
+            self.bubble.update();
+          },
+          h2: function(e) {
+            e.preventDefault();
+            if ($(window.getSelection().anchorNode.parentNode).is('h2')) {
+              d.execCommand('formatBlock', false, '<p>');
+            } else {
+              d.execCommand('formatBlock', false, '<h2>');
+            }
+            self.bubble.update();
+          },
+          ul: function(e) {
+            e.preventDefault();
+            d.execCommand('insertUnorderedList', false);
+            self.bubble.update();
+          },
+          ol: function(e) {
+            e.preventDefault();
+            d.execCommand('insertOrderedList', false);
+            self.bubble.update();
+          },
+          undo: function(e) {
+            e.preventDefault();
+            d.execCommand('undo', false);
+          }
+        },
+        enterKey: function(e) {
+          if (self.element.attr('editor-mode') === 'inline') {
+            e.preventDefault();
+            return;
+          }
+        },
+        paste: function(e) {
+          setTimeout(function() {
+            self.element.find('*').each(function() {
+              var current = $(this);
+              $.each(this.attributes, function() {
+                if (this.name !== 'class' || !current.hasClass('placeholder')) {
+                  current.removeAttr(this.name);
+                }
+              });
+            });
+          }, 100);
+        }
+      }
+    });
+    self.init();
+  };
+
+  var Utils = function() {
+    var isMac, self;
+    self = this;
+    isMac = w.navigator.platform == 'MacIntel';
+    $.extend(this, {
       keyboard: {
         isCommand: function(e, callbackTrue, callbackFalse) {
           if (isMac && e.metaKey || !isMac && e.ctrlKey) {
@@ -137,7 +420,7 @@
           var key = e.which,
             cmd = modifiers[key];
           if (cmd) {
-            callback.call(this, cmd);
+            callback(cmd);
           }
         },
         isEnter: function(e, callback) {
@@ -159,7 +442,7 @@
           elem.append(newElement);
           if (focus) {
             cache.focusedElement = elem.children().last();
-            utils.cursor.set(elem, 0, cache.focusedElement);
+            this.cursor.set(elem, 0, cache.focusedElement);
           }
           return newElement;
         },
@@ -248,32 +531,39 @@
           return (/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/).test(url);
         }
       }
-    },
-    bubble = {
+    });
+  };
+
+  var notebookBubble = function(editor) {
+    var self = this;
+    $.extend(self, {
       /*
        * This is called to position the bubble above the selection.
        */
-      updatePos: function(editor, elem) {
+      isVisible: function() {
+        return self.element.is(':visible');
+      },
+      updatePos: function() {
         var sel = w.getSelection(),
           range = sel.getRangeAt(0),
           boundary = range.getBoundingClientRect(),
-          bubbleWidth = elem.width(),
-          bubbleHeight = elem.height(),
-          offset = editor.offset().left,
+          bubbleWidth = self.element.width(),
+          bubbleHeight = self.element.height(),
+          offset = self.notebook.element.offset().left,
           pos = {
             x: (boundary.left + boundary.width / 2) - bubbleWidth / 2,
             y: boundary.top - bubbleHeight - 8 + $(document).scrollTop()
           };
-        transform.translate(elem, pos.x, pos.y);
+        transform.translate(self.element, pos.x, pos.y);
       },
       /*
        * Updates the bubble to set the active formats for the current selection.
        */
-      updateState: function(editor, elem) {
-        elem.find('button').removeClass('active');
+      updateState: function() {
+        self.element.find('button').removeClass('active');
         var sel = w.getSelection(),
           formats = [];
-        bubble.checkForFormatting(sel.focusNode, formats);
+        self.checkForFormatting(sel.focusNode, formats);
         var formatDict = {
           'b': 'bold',
           'i': 'italic',
@@ -286,7 +576,7 @@
         };
         for (var i = 0; i < formats.length; i++) {
           var format = formats[i];
-          elem.find('button.' + formatDict[format]).addClass('active');
+          self.element.find('button.' + formatDict[format]).addClass('active');
         }
       },
       /*
@@ -300,92 +590,86 @@
           if (currentNode.nodeName != '#text') {
             formats.push(currentNode.nodeName.toLowerCase());
           }
-          bubble.checkForFormatting(currentNode.parentNode, formats);
+          self.checkForFormatting(currentNode.parentNode, formats);
         }
       },
-      buildMenu: function(editor, elem) {
-        var ul = utils.html.addTag(elem, 'ul', false, false);
-        for (var cmd in options.modifiers) {
-          var li = utils.html.addTag(ul, 'li', false, false);
-          var btn = utils.html.addTag(li, 'button', false, false);
-          btn.attr('editor-command', options.modifiers[cmd]);
-          btn.addClass(options.modifiers[cmd]);
+      buildMenu: function() {
+        var ul = self.notebook.utils.html.addTag(self.element, 'ul', false, false);
+        for (var cmd in self.notebook.options.modifiers) {
+          var li = self.notebook.utils.html.addTag(ul, 'li', false, false);
+          var btn = self.notebook.utils.html.addTag(li, 'button', false, false);
+          btn.attr('editor-command', self.notebook.options.modifiers[cmd]);
+          btn.addClass(self.notebook.options.modifiers[cmd]);
         }
-        elem.find('button').click(function(e) {
+        self.element.find('button').click(function(e) {
           e.preventDefault();
           var cmd = $(this).attr('editor-command');
-          events.commands[cmd].call(editor, e);
+          self.notebook.events.commands[cmd](e);
         });
-        var linkArea = utils.html.addTag(elem, 'div', false, false);
+        var linkArea = self.notebook.utils.html.addTag(self.element, 'div', false, false);
         linkArea.addClass('link-area');
-        var linkInput = utils.html.addTag(linkArea, 'input', false, false);
+        var linkInput = self.notebook.utils.html.addTag(linkArea, 'input', false, false);
         linkInput.attr({
           type: 'text'
         });
-        var closeBtn = utils.html.addTag(linkArea, 'button', false, false);
+        var closeBtn = self.notebook.utils.html.addTag(linkArea, 'button', false, false);
         closeBtn.click(function(e) {
           e.preventDefault();
-          var editor = $(this).closest('.editor');
           $(this).closest('.link-area').hide();
-          $(this).closest('.bubble').find('ul').show();
+          self.element.find('ul').show();
         });
       },
+      init: function(editor) {
+        self.notebook = editor;
+
+        self.element = self.notebook.utils.html.addTag(self.notebook.element.parent(), 'div', false, false);
+        self.element.addClass('jquery-notebook bubble');
+        self.buildMenu();
+      },
       show: function() {
-        var tag = $(this).parent().find('.bubble');
-        if (!tag.length) {
-          tag = utils.html.addTag($(this).parent(), 'div', false, false);
-          tag.addClass('jquery-notebook bubble');
-          bubble.buildMenu(this, tag);
-        }
-        tag.show();
-        bubble.updateState(this, tag);
-        if (!tag.hasClass('active')) {
-          tag.addClass('jump');
-        } else {
-          tag.removeClass('jump');
-        }
-        bubble.updatePos($(this), tag);
-        tag.addClass('active');
+        self.element.show();
+        self.updateState();
+        self.element.toggleClass('jump');
+        self.updatePos();
+        self.element.addClass('active');
       },
       update: function() {
-        var tag = $(this).parent().find('.bubble');
-        bubble.updateState(this, tag);
+        self.updateState();
       },
       clear: function() {
-        var elem = $(this).parent().find('.bubble');
-        if (!elem.hasClass('active')) return;
-        elem.removeClass('active');
-        bubble.hideLinkInput.call(this);
-        bubble.showButtons.call(this);
+        if (!self.element.hasClass('active')) return;
+        self.element.removeClass('active');
+        self.hideLinkInput();
+        self.showButtons();
         setTimeout(function() {
-          if (elem.hasClass('active')) return;
-          elem.hide();
+          if (self.element.hasClass('active')) return;
+          self.element.hide();
         }, 500);
       },
       hideButtons: function() {
-        $(this).parent().find('.bubble').find('ul').hide();
+        self.element.find('ul').hide();
       },
       showButtons: function() {
-        $(this).parent().find('.bubble').find('ul').show();
+        self.element.find('ul').show();
       },
       showLinkInput: function(selection) {
-        bubble.hideButtons.call(this);
-        var editor = this;
-        var elem = $(this).parent().find('.bubble').find('input[type=text]');
-        var hasLink = elem.closest('.jquery-notebook').find('button.anchor').hasClass('active');
+        self.hideButtons();
+        var elem, hasLink;
+        elem = self.element.find('input[type=text]');
+        hasLink = elem.closest('.jquery-notebook').find('button.anchor').hasClass('active');
         elem.unbind('keydown');
         elem.keydown(function(e) {
-          var elem = $(this);
-          utils.keyboard.isEnter(e, function() {
+          var el = $(this);
+          self.notebook.utils.keyboard.isEnter(e, function() {
             e.preventDefault();
-            var url = elem.val();
-            if (utils.validation.isUrl(url)) {
+            var url = el.val();
+            if (self.notebook.utils.validation.isUrl(url)) {
               e.url = url;
-              events.commands.createLink(e, selection);
-              bubble.clear.call(editor);
+              self.notebook.events.commands.createLink(e, selection);
+              self.clear();
             } else if (url === '' && hasLink) {
-              events.commands.removeLink(e, selection);
-              bubble.clear.call(editor);
+              self.notebook.events.commands.removeLink(e, selection);
+              self.clear();
             }
           });
         });
@@ -401,290 +685,23 @@
         });
         var linkText = 'http://';
         if (hasLink) {
-          var anchor = $(utils.selection.getContainer(selection)).closest('a');
+          var anchor = $(self.notebook.utils.selection.getContainer(selection)).closest('a');
           linkText = anchor.prop('href') || linkText;
         }
-        $(this).parent().find('.link-area').show();
+        self.notebook.element.parent().find('.link-area').show();
         elem.val(linkText).focus();
       },
       hideLinkInput: function() {
-        $(this).parent().find('.bubble').find('.link-area').hide();
+        self.element.find('.link-area').hide();
       }
-    },
-    actions = {
-      bindEvents: function(elem) {
-        elem.keydown(rawEvents.keydown);
-        elem.keyup(rawEvents.keyup);
-        elem.focus(rawEvents.focus);
-        elem.bind('paste', events.paste);
-        elem.mousedown(rawEvents.mouseClick);
-        elem.mouseup(rawEvents.mouseUp);
-        elem.mousemove(rawEvents.mouseMove);
-        elem.blur(rawEvents.blur);
-        $('body').mouseup(function(e) {
-          if (e.target == e.currentTarget && cache.isSelecting) {
-            rawEvents.mouseUp.call(elem, e);
-          }
-        });
-      },
-      setPlaceholder: function(e) {
-        if (/^\s*$/.test($(this).text())) {
-          $(this).empty();
-          var placeholder = utils.html.addTag($(this), 'p').addClass('placeholder');
-          placeholder.append($(this).attr('editor-placeholder'));
-          utils.html.addTag($(this), 'p', typeof e.focus != 'undefined' ? e.focus : false, true);
-        } else {
-          $(this).find('.placeholder').remove();
-        }
-      },
-      removePlaceholder: function(e) {
-        $(this).find('.placeholder').remove();
-      },
-      preserveElementFocus: function() {
-        var anchorNode = w.getSelection() ? w.getSelection().anchorNode : d.activeElement;
-        if (anchorNode) {
-          var current = anchorNode.parentNode,
-            diff = current !== cache.focusedElement,
-            children = this.children,
-            elementIndex = 0;
-          if (current === this) {
-            current = anchorNode;
-          }
-          for (var i = 0; i < children.length; i++) {
-            if (current === children[i]) {
-              elementIndex = i;
-              break;
-            }
-          }
-          if (diff) {
-            cache.focusedElement = current;
-            cache.focusedElementIndex = elementIndex;
-          }
-        }
-      },
-      prepare: function(elem, customOptions) {
-        options = customOptions;
+    });
 
-        elem.attr('editor-mode', options.mode);
-        elem.attr('editor-placeholder', options.placeholder);
-        elem.attr('contenteditable', true);
-        elem.css('position', 'relative');
-        elem.addClass('jquery-notebook editor');
-        actions.setPlaceholder.call(elem, {});
-        actions.preserveElementFocus.call(elem);
-        if (options.autoFocus === true) {
-          var firstP = elem.find('p:not(.placeholder)');
-          utils.cursor.set(elem, 0, firstP);
-        }
-      }
-    },
-    rawEvents = {
-      keydown: function(e) {
-        var elem = this;
-        if (cache.command && e.which === 65) {
-          setTimeout(function() {
-            bubble.show.call(elem);
-          }, 50);
-        }
-        utils.keyboard.isCommand(e, function() {
-          cache.command = true;
-        }, function() {
-          cache.command = false;
-        });
-        utils.keyboard.isShift(e, function() {
-          cache.shift = true;
-        }, function() {
-          cache.shift = false;
-        });
-        utils.keyboard.isModifier.call(this, e, function(modifier) {
-          if (cache.command) {
-            events.commands[modifier].call(this, e);
-          }
-        });
-
-        if (cache.shift) {
-          utils.keyboard.isArrow.call(this, e, function() {
-            setTimeout(function() {
-              var txt = utils.selection.getText();
-              if (txt !== '') {
-                bubble.show.call(elem);
-              } else {
-                bubble.clear.call(elem);
-              }
-            }, 100);
-          });
-        } else {
-          utils.keyboard.isArrow.call(this, e, function() {
-            bubble.clear.call(elem);
-          });
-        }
-
-        if (e.which === 13) {
-          events.enterKey.call(this, e);
-        }
-        if (e.which === 27) {
-          bubble.clear.call(this);
-        }
-        if (e.which === 86) {
-          events.paste.call(this, e);
-        }
-      },
-      keyup: function(e) {
-        utils.keyboard.isCommand(e, function() {
-          cache.command = false;
-        }, function() {
-          cache.command = true;
-        });
-        actions.preserveElementFocus.call(this);
-        actions.removePlaceholder.call(this);
-
-        /*
-         * This breaks the undo when the whole text is deleted but so far
-         * it is the only way that I fould to solve the more serious bug
-         * that the editor was losing the p elements after deleting the whole text
-         */
-        if (/^\s*$/.test($(this).text())) {
-          $(this).empty();
-          utils.html.addTag($(this), 'p', true, true);
-        }
-      },
-      focus: function(e) {
-        cache.command = false;
-        cache.shift = false;
-      },
-      mouseClick: function(e) {
-        var elem = this;
-        cache.isSelecting = true;
-        if (e.button === 2) {
-          setTimeout(function() {
-            bubble.show.call(elem);
-          }, 50);
-          e.preventDefault();
-          return;
-        }
-        if ($(this).find('.bubble:visible').length) {
-          var bubbleTag = $(this).find('.bubble:visible'),
-            bubbleX = bubbleTag.offset().left,
-            bubbleY = bubbleTag.offset().top,
-            bubbleWidth = bubbleTag.width(),
-            bubbleHeight = bubbleTag.height();
-          if (mouseX > bubbleX && mouseX < bubbleX + bubbleWidth &&
-            mouseY > bubbleY && mouseY < bubbleY + bubbleHeight) {
-            return;
-          }
-        }
-      },
-      mouseUp: function(e) {
-        e.preventDefault();
-        var elem = this;
-        cache.isSelecting = false;
-        setTimeout(function() {
-          var s = utils.selection.save();
-          if (s.collapsed) {
-            bubble.clear.call(elem);
-          } else {
-            bubble.show.call(elem);
-          }
-        }, 50);
-      },
-      mouseMove: function(e) {
-        mouseX = e.pageX;
-        mouseY = e.pageY;
-      },
-      blur: function(e) {
-        actions.setPlaceholder.call(this, {
-          focus: false
-        });
-      }
-    },
-    events = {
-      commands: {
-        bold: function(e) {
-          e.preventDefault();
-          d.execCommand('bold', false);
-          bubble.update.call(this);
-        },
-        italic: function(e) {
-          e.preventDefault();
-          d.execCommand('italic', false);
-          bubble.update.call(this);
-        },
-        underline: function(e) {
-          e.preventDefault();
-          d.execCommand('underline', false);
-          bubble.update.call(this);
-        },
-        anchor: function(e) {
-          e.preventDefault();
-          var s = utils.selection.save();
-          bubble.showLinkInput.call(this, s);
-        },
-        createLink: function(e, s) {
-          utils.selection.restore(s);
-          d.execCommand('createLink', false, e.url);
-          bubble.update.call(this);
-        },
-        removeLink: function(e, s) {
-          var el = $(utils.selection.getContainer(s)).closest('a');
-          el.contents().first().unwrap();
-        },
-        h1: function(e) {
-          e.preventDefault();
-          if ($(window.getSelection().anchorNode.parentNode).is('h1')) {
-            d.execCommand('formatBlock', false, '<p>');
-          } else {
-            d.execCommand('formatBlock', false, '<h1>');
-          }
-          bubble.update.call(this);
-        },
-        h2: function(e) {
-          e.preventDefault();
-          if ($(window.getSelection().anchorNode.parentNode).is('h2')) {
-            d.execCommand('formatBlock', false, '<p>');
-          } else {
-            d.execCommand('formatBlock', false, '<h2>');
-          }
-          bubble.update.call(this);
-        },
-        ul: function(e) {
-          e.preventDefault();
-          d.execCommand('insertUnorderedList', false);
-          bubble.update.call(this);
-        },
-        ol: function(e) {
-          e.preventDefault();
-          d.execCommand('insertOrderedList', false);
-          bubble.update.call(this);
-        },
-        undo: function(e) {
-          e.preventDefault();
-          d.execCommand('undo', false);
-        }
-      },
-      enterKey: function(e) {
-        if ($(this).attr('editor-mode') === 'inline') {
-          e.preventDefault();
-          return;
-        }
-      },
-      paste: function(e) {
-        var elem = $(this);
-        setTimeout(function() {
-          elem.find('*').each(function() {
-            var current = $(this);
-            $.each(this.attributes, function() {
-              if (this.name !== 'class' || !current.hasClass('placeholder')) {
-                current.removeAttr(this.name);
-              }
-            });
-          });
-        }, 100);
-      }
-    };
+    self.init(editor);
+  };
 
   $.fn.notebook = function(options) {
     options = $.extend({}, $.fn.notebook.defaults, options);
-    var self = this;
+    /*var self = this;
     if (this.prop("tagName") == 'TEXTAREA') {
       self.hide();
       var textarea = self;
@@ -694,8 +711,10 @@
       self.insertAfter(textarea);
     }
     actions.prepare(self, options);
-    actions.bindEvents(self);
-    return self;
+    actions.bindEvents(self);*/
+    return this.each(function() {
+      new Notebook(this, options);
+    });
   };
 
   $.fn.notebook.defaults = {
