@@ -1,3 +1,7 @@
+.jquery-notebook-container {
+    position: relative;
+}
+
 .jquery-notebook.editor {
     position: relative;
     outline: none;
