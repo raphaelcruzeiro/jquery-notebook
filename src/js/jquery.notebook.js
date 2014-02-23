@@ -701,17 +701,7 @@
 
   $.fn.notebook = function(options) {
     options = $.extend({}, $.fn.notebook.defaults, options);
-    /*var self = this;
-    if (this.prop("tagName") == 'TEXTAREA') {
-      self.hide();
-      var textarea = self;
-      self = $('<div />', {
-        html: utils.html.decode(textarea.html())
-      });
-      self.insertAfter(textarea);
-    }
-    actions.prepare(self, options);
-    actions.bindEvents(self);*/
+
     return this.each(function() {
       new Notebook(this, options);
     });
