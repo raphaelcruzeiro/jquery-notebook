@@ -23,7 +23,7 @@
      * functions and generates a raw transform matrix, combining the new transform
      * with the others that were previously applied to the element.
      */
-     
+
     var transform = (function() {
         var matrixToArray = function(str) {
             if (!str || str == 'none') {
@@ -41,7 +41,7 @@
             var previousTransform = getPreviousTransforms(elem);
             return matrixToArray(previousTransform);
         };
-		
+
         var applyTransform = function(elem, transform) {
             elem.css('-webkit-transform', transform);
             elem.css('-moz-transform', transform);
@@ -49,7 +49,7 @@
             elem.css('-ms-transform', transform);
             elem.css('transform', transform);
         };
-		
+
         var buildTransformString = function(matrix) {
             return 'matrix(' + matrix[0] +
                 ', ' + matrix[1] +
@@ -258,7 +258,7 @@
                     bubbleHeight = elem.height(),
                     offset = editor.offset().left,
                     pos = {
-                        x: (boundary.left + boundary.width / 2) - bubbleWidth / 2,
+                        x: (boundary.left + boundary.width / 2) - (bubbleWidth / 2),
                         y: boundary.top - bubbleHeight - 8 + $(document).scrollTop()
                     };
                 transform.translate(elem, pos.x, pos.y);
@@ -337,11 +337,11 @@
                 tag.show();
                 bubble.updateState(this, tag);
                 if (!tag.hasClass('active')) {
-	                tag.addClass('jump');
+                    tag.addClass('jump');
                 } else {
-	                tag.removeClass('jump');
+                    tag.removeClass('jump');
                 }
-				bubble.updatePos($(this), tag);  
+                bubble.updatePos($(this), tag);
                 tag.addClass('active');
             },
             update: function() {
@@ -524,6 +524,9 @@
                 if (e.which === 86) {
                     events.paste.call(this, e);
                 }
+                if (e.which === 90) {
+                    events.commands.undo.call(this, e);
+                }
             },
             keyup: function(e) {
                 utils.keyboard.isCommand(e, function() {
@@ -655,6 +658,10 @@
                 undo: function(e) {
                     e.preventDefault();
                     d.execCommand('undo', false);
+                    var sel = w.getSelection(),
+                        range = sel.getRangeAt(0),
+                        boundary = range.getBoundingClientRect();
+                    $(document).scrollTop($(document).scrollTop() + boundary.top);
                 }
             },
             enterKey: function(e) {
