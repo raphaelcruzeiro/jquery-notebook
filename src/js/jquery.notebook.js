@@ -579,11 +579,13 @@
                 cache.isSelecting = false;
                 setTimeout(function() {
                     var s = utils.selection.save();
-                    if (s.collapsed) {
-                        bubble.clear.call(elem);
-                    } else {
-                        bubble.show.call(elem);
-                    }
+					if (s != null) {
+						if (s.collapsed) {
+							bubble.clear.call(elem);
+						} else {
+							bubble.show.call(elem);
+						}
+					}
                 }, 50);
             },
             mouseMove: function(e) {
