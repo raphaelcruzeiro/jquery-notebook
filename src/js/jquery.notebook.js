@@ -579,7 +579,7 @@
                 cache.isSelecting = false;
                 setTimeout(function() {
                     var s = utils.selection.save();
-                    if (s != null) {
+                    if (s) {
                         if (s.collapsed) {
                             bubble.clear.call(elem);
                         } else {
