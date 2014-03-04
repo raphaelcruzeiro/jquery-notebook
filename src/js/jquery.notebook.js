@@ -521,10 +521,10 @@
                 if (e.which === 27) {
                     bubble.clear.call(this);
                 }
-                if (e.which === 86) {
+                if (e.which === 86 && cache.command) {
                     events.paste.call(this, e);
                 }
-                if (e.which === 90) {
+                if (e.which === 90 && cache.command) {
                     events.commands.undo.call(this, e);
                 }
             },
@@ -700,3 +700,4 @@
     };
 
 })(jQuery, document, window);
+fac

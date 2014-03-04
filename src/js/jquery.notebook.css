@@ -32,7 +32,6 @@
     border-radius: 5px;
     border: 1px solid #1C1C1B;
     box-shadow: 0 2px 3px rgba(0,0,0,0.2), inset 0 0 2px rgba(255,255,255,0.2); /* Bubble Shadows */
-
     background: rgb(55,55,53);
 	background: -moz-linear-gradient(top,  rgba(55,55,53,1) 0%, rgba(40,40,39,1) 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(55,55,53,1)), color-stop(100%,rgba(40,40,39,1)));
