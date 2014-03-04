@@ -332,8 +332,9 @@
                 if (!tag.length) {
                     tag = utils.html.addTag($(this).parent(), 'div', false, false);
                     tag.addClass('jquery-notebook bubble');
-                    bubble.buildMenu(this, tag);
                 }
+                tag.empty();
+                bubble.buildMenu(this, tag);
                 tag.show();
                 bubble.updateState(this, tag);
                 if (!tag.hasClass('active')) {
