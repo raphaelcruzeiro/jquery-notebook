@@ -91,6 +91,7 @@
     color: white;
     font-size: 14pt;
     cursor: pointer;
+    -webkit-font-smoothing: antialiased;
 }
 
 .jquery-notebook.bubble button.active {
