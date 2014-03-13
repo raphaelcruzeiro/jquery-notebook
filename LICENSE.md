@@ -1,5 +1,5 @@
 Copyright (c) 2014
-Raphael Cruzeiro - http://raphaelcruzeiro.eu/
+Raphael Cruzeiro - http://raphaelcruzeiro.eu/  
 Otávio Soares
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
