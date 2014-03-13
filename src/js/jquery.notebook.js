@@ -686,6 +686,13 @@
                 var elem = $(sel.focusNode.parentElement);
                 var nextElem = elem.next();
                 if(!nextElem.length && elem.prop('tagName') != 'LI') {
+                    var tagName = elem.prop('tagName');
+                    if(tagName === 'OL' || tagName === 'UL') {
+                        var lastLi = elem.children().last();
+                        if(lastLi.length && lastLi.text() === '') {
+                            lastLi.remove();
+                        }
+                    }
                     utils.html.addTag($(this), 'p', true, true);
                     e.preventDefault();
                     e.stopPropagation()
