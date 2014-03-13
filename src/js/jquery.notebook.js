@@ -699,17 +699,33 @@
                 }
             },
             paste: function(e) {
-                var elem = $(this);
-                setTimeout(function() {
-                    elem.find('*').each(function() {
-                        var current = $(this);
-                        $.each(this.attributes, function() {
-                            if (this.name !== 'class' || !current.hasClass('placeholder')) {
-                                current.removeAttr(this.name);
-                            }
-                        });
+                var elem = $(this),
+                    id = 'jqeditor-temparea',
+                    range = utils.selection.save(),
+                    tempArea = $('#' + id);
+                if (tempArea.length < 1) {
+                    var body = $('body');
+                    tempArea = $('<textarea></textarea>');
+                    tempArea.css({
+                        position: 'absolute',
+                        left: -1000
                     });
-                }, 100);
+                    tempArea.attr('id', id);
+                    body.append(tempArea);
+                }
+                tempArea.focus();
+
+                setTimeout(function() {
+                    var clipboardContent = '',
+                        paragraphs = tempArea.val().split('\n');
+                    for(var i = 0; i < paragraphs.length; i++) {
+                        clipboardContent += ['<p>', paragraphs[i], '</p>'].join('');
+                    }
+                    tempArea.val('');
+                    utils.selection.restore(range);
+                    d.execCommand('delete');
+                    d.execCommand('insertHTML', false, clipboardContent);
+                }, 500);
             }
         };
 
