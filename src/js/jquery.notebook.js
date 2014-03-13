@@ -675,10 +675,10 @@
                     $(document).scrollTop($(document).scrollTop() + boundary.top);
                 }
             },
-            enterKey: function(e) {;
+            enterKey: function(e) {
                 if ($(this).attr('editor-mode') === 'inline') {
                     e.preventDefault();
-                    e.stopPropagation()
+                    e.stopPropagation();
                     return;
                 }
 
@@ -695,7 +695,7 @@
                     }
                     utils.html.addTag($(this), 'p', true, true);
                     e.preventDefault();
-                    e.stopPropagation()
+                    e.stopPropagation();
                 }
             },
             paste: function(e) {
