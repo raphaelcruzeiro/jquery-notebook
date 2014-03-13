@@ -238,6 +238,14 @@
                         return sel.parentElement();
                     }
                     return null;
+                },
+                getSelection: function() {
+                    if (w.getSelection) {
+                        return w.getSelection();
+                    } else if (d.selection && d.selection.createRange) { // IE
+                        return d.selection;
+                    }
+                    return null;
                 }
             },
             validation: {
@@ -667,10 +675,20 @@
                     $(document).scrollTop($(document).scrollTop() + boundary.top);
                 }
             },
-            enterKey: function(e) {
+            enterKey: function(e) {;
                 if ($(this).attr('editor-mode') === 'inline') {
                     e.preventDefault();
+                    e.stopPropagation()
                     return;
+                }
+
+                var sel = utils.selection.getSelection();
+                var elem = $(sel.focusNode.parentElement);
+                var nextElem = elem.next();
+                if(!nextElem.length && elem.prop('tagName') != 'LI') {
+                    utils.html.addTag($(this), 'p', true, true);
+                    e.preventDefault();
+                    e.stopPropagation()
                 }
             },
             paste: function(e) {
