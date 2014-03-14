@@ -45,10 +45,10 @@ These are the supported options and their default values:
 
 ```js
 $.fn.notebook.defaults = {
-  autoFocus: false,
-  placeholder: 'Your text here...',
-  mode: 'multiline', // multiline or inline
-  modifiers: ['bold', 'italic', 'underline', 'h1', 'h2', 'ol', 'ul', 'anchor']
+    autoFocus: false,
+    placeholder: 'Your text here...',
+    mode: 'multiline', // multiline or inline
+    modifiers: ['bold', 'italic', 'underline', 'h1', 'h2', 'ol', 'ul', 'anchor']
 };
 ```
 
@@ -60,13 +60,13 @@ Fires every time the editor's content is modified:
 ```js
 // Using jQuery:
 $('.my-editor').on('contentChange', function(e) {
-  var content = e.originalEvent.detail.content;
+    var content = e.originalEvent.detail.content;
 });
 
 // OR using the event directly:
 var editorDomElement = $('.my-editor').get(0);
 editorDomElement.addEventListener('contentChange', function(e) {
-  var content = e.detail.content;
+    var content = e.detail.content;
 });
 ```
 
