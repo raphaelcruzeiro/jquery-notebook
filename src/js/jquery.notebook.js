@@ -563,15 +563,15 @@
             mouseClick: function(e) {
                 var elem = this;
                 cache.isSelecting = true;
-                if (e.button === 2) {
-                    setTimeout(function() {
-                        bubble.show.call(elem);
-                    }, 50);
-                    e.preventDefault();
-                    return;
-                }
-                if ($(this).find('.bubble:visible').length) {
-                    var bubbleTag = $(this).find('.bubble:visible'),
+                // if (e.button === 2) {
+                //     setTimeout(function() {
+                //         bubble.show.call(elem);
+                //     }, 50);
+                //     e.preventDefault();
+                //     return;
+                // }
+                if ($(this).parent().find('.bubble:visible').length) {
+                    var bubbleTag = $(this).parent().find('.bubble:visible'),
                         bubbleX = bubbleTag.offset().left,
                         bubbleY = bubbleTag.offset().top,
                         bubbleWidth = bubbleTag.width(),
@@ -583,7 +583,6 @@
                 }
             },
             mouseUp: function(e) {
-                e.preventDefault();
                 var elem = this;
                 cache.isSelecting = false;
                 setTimeout(function() {
@@ -593,6 +592,7 @@
                             bubble.clear.call(elem);
                         } else {
                             bubble.show.call(elem);
+                            e.preventDefault();
                         }
                     }
                 }, 50);
