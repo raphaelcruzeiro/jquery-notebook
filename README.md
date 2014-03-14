@@ -1,34 +1,34 @@
 # jQuery-Notebook
-**A simple, clean and elegant WYSIWYG rich text editor for web aplications**   
+**A simple, clean and elegant WYSIWYG rich text editor for web aplications**
 **Note:** Check out the fully functional demo and examples [here](http://raphaelcruzeiro.github.io/jquery-notebook/).
 # Usage
 **Prerequisites:** jQuery-Notebook's default styling uses [FontAwesome](http://fontawesome.io/) draw the icons on the _context bubble_. You can download FontAwesome [here](http://fontawesome.io/assets/font-awesome-4.0.3.zip) or link to the CDN.
 
-##### Add the FontAwesome css and jQuery-Notebook css to you page _head_:   
+##### Add the FontAwesome css and jQuery-Notebook css to you page _head_:
 
 ```html
 <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="src/js/jquery.notebook.css">
 ```
 
-##### Add jquery and jquery-notebook.js to your page: 
+##### Add jquery and jquery-notebook.js to your page:
 
 ```html
 <script type="text/javascript" src="src/js/libs/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="src/js/jquery.notebook.js"></script>
 ```
 
-##### Create the editor:   
+##### Create the editor:
 
 ```html
 <div class="my-editor"></div>
-```   
+```
 
 ```js
 $(document).ready(function(){
     $('.my-editor').notebook();
 });
-```   
+```
 
 # Available Commands
 
@@ -52,12 +52,31 @@ $.fn.notebook.defaults = {
 };
 ```
 
+# Events
+
+- __contentChange__:  
+Fires every time the editor's content is modified:  
+
+```js
+// Using jQuery:
+$('.my-editor').on('contentChange', function(e) {
+  var content = e.originalEvent.detail.content;
+});
+
+// OR using the event directly:
+var editorDomElement = $('.my-editor').get(0);
+editorDomElement.addEventListener('contentChange', function(e) {
+  var content = e.detail.content;
+});
+```
+
+
 That's it!  
 
 # Contributors
-[raphaelcruzeiro](https://github.com/raphaelcruzeiro/)   
-[otaviosoares](https://github.com/otaviosoares/)   
-[slahn](https://github.com/slahn)   
-[TrevorHinesley](https://github.com/TrevorHinesley)   
-[cbartlett](https://github.com/cbartlett)   
+[raphaelcruzeiro](https://github.com/raphaelcruzeiro/)
+[otaviosoares](https://github.com/otaviosoares/)
+[slahn](https://github.com/slahn)
+[TrevorHinesley](https://github.com/TrevorHinesley)
+[cbartlett](https://github.com/cbartlett)
 [penman](https://github.com/penman)

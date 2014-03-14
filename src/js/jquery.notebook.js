@@ -468,8 +468,21 @@
                     }
                 }
             },
+            setContentArea: function(elem) {
+                var id = $('body').find('.jquery-editor').length + 1;
+                elem.attr('data-jquery-notebook-id', id);
+                var body = $('body');
+                contentArea = $('<textarea></textarea>');
+                contentArea.css({
+                    position: 'absolute',
+                    left: -1000
+                });
+                contentArea.attr('id', 'jquery-notebook-content-' + id);
+                body.append(contentArea);
+            },
             prepare: function(elem, customOptions) {
                 options = customOptions;
+                actions.setContentArea(elem);
                 elem.attr('editor-mode', options.mode);
                 elem.attr('editor-placeholder', options.placeholder);
                 elem.attr('contenteditable', true);
@@ -555,6 +568,7 @@
                     $(this).empty();
                     utils.html.addTag($(this), 'p', true, true);
                 }
+                events.change.call(this);
             },
             focus: function(e) {
                 cache.command = false;
@@ -563,13 +577,6 @@
             mouseClick: function(e) {
                 var elem = this;
                 cache.isSelecting = true;
-                // if (e.button === 2) {
-                //     setTimeout(function() {
-                //         bubble.show.call(elem);
-                //     }, 50);
-                //     e.preventDefault();
-                //     return;
-                // }
                 if ($(this).parent().find('.bubble:visible').length) {
                     var bubbleTag = $(this).parent().find('.bubble:visible'),
                         bubbleX = bubbleTag.offset().left,
@@ -613,30 +620,36 @@
                     e.preventDefault();
                     d.execCommand('bold', false);
                     bubble.update.call(this);
+                    events.change.call(this);
                 },
                 italic: function(e) {
                     e.preventDefault();
                     d.execCommand('italic', false);
                     bubble.update.call(this);
+                    events.change.call(this);
                 },
                 underline: function(e) {
                     e.preventDefault();
                     d.execCommand('underline', false);
                     bubble.update.call(this);
+                    events.change.call(this);
                 },
                 anchor: function(e) {
                     e.preventDefault();
                     var s = utils.selection.save();
                     bubble.showLinkInput.call(this, s);
+                    events.change.call(this);
                 },
                 createLink: function(e, s) {
                     utils.selection.restore(s);
                     d.execCommand('createLink', false, e.url);
                     bubble.update.call(this);
+                    events.change.call(this);
                 },
                 removeLink: function(e, s) {
                     var el = $(utils.selection.getContainer(s)).closest('a');
                     el.contents().first().unwrap();
+                    events.change.call(this);
                 },
                 h1: function(e) {
                     e.preventDefault();
@@ -646,6 +659,7 @@
                         d.execCommand('formatBlock', false, '<h1>');
                     }
                     bubble.update.call(this);
+                    events.change.call(this);
                 },
                 h2: function(e) {
                     e.preventDefault();
@@ -655,16 +669,19 @@
                         d.execCommand('formatBlock', false, '<h2>');
                     }
                     bubble.update.call(this);
+                    events.change.call(this);
                 },
                 ul: function(e) {
                     e.preventDefault();
                     d.execCommand('insertUnorderedList', false);
                     bubble.update.call(this);
+                    events.change.call(this);
                 },
                 ol: function(e) {
                     e.preventDefault();
                     d.execCommand('insertOrderedList', false);
                     bubble.update.call(this);
+                    events.change.call(this);
                 },
                 undo: function(e) {
                     e.preventDefault();
@@ -673,6 +690,7 @@
                         range = sel.getRangeAt(0),
                         boundary = range.getBoundingClientRect();
                     $(document).scrollTop($(document).scrollTop() + boundary.top);
+                    events.change.call(this);
                 }
             },
             enterKey: function(e) {
@@ -697,6 +715,7 @@
                     e.preventDefault();
                     e.stopPropagation();
                 }
+                events.change.call(this);
             },
             paste: function(e) {
                 var elem = $(this),
@@ -725,7 +744,15 @@
                     utils.selection.restore(range);
                     d.execCommand('delete');
                     d.execCommand('insertHTML', false, clipboardContent);
+                    events.change.call(this);
                 }, 500);
+            },
+            change: function(e) {
+                var contentArea = $('#jquery-notebook-content-' + $(this).attr('data-jquery-notebook-id'));
+                contentArea.val($(this).html());
+                var content = contentArea.val();
+                var changeEvent = new CustomEvent('contentChange', { 'detail': { 'content' : content }});
+                this.dispatchEvent(changeEvent);
             }
         };
 
