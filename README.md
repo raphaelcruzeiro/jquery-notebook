@@ -77,9 +77,12 @@ editorDomElement.addEventListener('contentChange', function(e) {
 We use Github Issues to do basically everything on this project, from feature
 request to bug tracking. There are a few issues marked as _easy picking_.
 These issues are ideally suited for someone who wants to start contributing as
-they are fairly simple. To contribute to this project just fork the repository,
+they are fairly simple.  
+
+To contribute to this project just fork the repository,
 create a branch with a descriptive but brief name and send a pull
-request when ready. After a few accepted and merged pull requests you can
+request when ready. There is __no need__ to squash your commits
+before sending a pull request. After a few accepted and merged pull requests you can
 request push rights to the repository if you want to.
 
 Please use 4 spaces for indentation. Any pull requests that has any JavaScript
