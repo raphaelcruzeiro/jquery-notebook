@@ -764,7 +764,7 @@
     };
 
     $.fn.isEmpty = function() {
-        if (($('.editor').find('.placeholder').length > 0) || (/^\s*$/.test($('.editor').text())) ) {
+        if (($(this).find('.placeholder').length > 0) || (/^\s*$/.test($(this).text())) ) {
              return true;
         } else {
              return false;
