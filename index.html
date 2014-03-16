@@ -16,7 +16,6 @@
             <p>This jQuery plugin is released under the MIT license. You can check out the project and see how extremely simple it is to use this editor on your application by clicking on the Github ribbon on the top corner of this page. Feel free to contribute with this project by registering any bug that you may encounter as an issue on Github, and working on the issues that are already there. I'm looking forward to seeing your pull request!</p>
             <p>Now, just take a time to test the editor. Yes, <b>this div is the editor</b>. Try to edit this text, select a part of this text and don't forget to try the basic text editor keyboard shortcuts.</p>
         </div>
-		
         <script type="text/javascript" src="src/js/libs/jquery-1.10.2.min.js"></script>
         <script type="text/javascript" src="src/js/jquery.notebook.js"></script>
         <script type="text/javascript">
@@ -26,13 +25,13 @@
                     placeholder: 'Type something awesome...'
                 });
 				
-				$('#test').click( function() {
-				    if($('.editor').isEmpty()) {
+                $('#test').click( function() {
+                    if($('.editor').isEmpty()) {
                         console.log("Empty");
                     } else {
-					    console.log("Not empty");
-					};
-				});
+                        console.log("Not empty");
+                    };
+                });
             });
         </script>
         <script>
@@ -43,9 +42,6 @@
 
             ga('create', 'UA-46641093-3', 'raphaelcruzeiro.github.io');
             ga('send', 'pageview');
-			
-			
-
         </script>
     </body>
 </html>
