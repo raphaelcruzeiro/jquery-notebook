@@ -496,6 +496,32 @@
                 }
             }
         },
+        compatibility = {
+            webkit: {
+                handleWrapping: function(){
+                    // Webkit mistakenly creates the lists inside the p elements.
+                    // This is a workarond until the webkit team adresses this issue.
+                    if(/webkit/i.test(n.userAgent)) {
+                        var sel = utils.selection.getSelection(),
+                            ul = $(sel.focusNode.parentNode.parentNode);
+                        if($(ul).is('ul')){
+                            ul.unwrap();
+                            var elText = ul.find('li').first().get(0).firstChild;
+                        } else {
+                            var elText = sel.focusNode;
+                            $(sel.focusNode).wrap('<p contenteditable="true"></p>');
+                        }
+                        sel = utils.selection.getSelection();
+                        var range = d.createRange();
+                        range.setStart(elText, 0)
+                        range.setEnd(elText, elText.length);
+                        sel.removeAllRanges();
+                        sel.addRange(range);
+                        bubble.show.call(this);
+                    }
+                }
+            }
+        },
         rawEvents = {
             keydown: function(e) {
                 var elem = this;
@@ -674,31 +700,14 @@
                 ul: function(e) {
                     e.preventDefault();
                     d.execCommand('insertUnorderedList', false);
-                    if(/webkit/i.test(n.userAgent)) {
-                        var sel = utils.selection.getSelection(),
-                            ul = $(sel.focusNode.parentNode.parentNode);
-                        if($(ul).is('ul')){
-                            ul.unwrap();
-                            var el = ul.find('li').first().get(0);
-                        } else {
-                            $(sel.focusNode).wrap('<p contenteditable="true"></p>');
-                            var el = $(sel.focusNode.parentNode).get(0);
-                        }
-                        var elText = el.firstChild;
-                        sel = utils.selection.getSelection();
-                        var range = d.createRange();
-                        range.setStart(elText, 0)
-                        range.setEnd(elText, elText.length);
-                        sel.removeAllRanges();
-                        sel.addRange(range);
-                        bubble.show.call(this);
-                    }
+                    compatibility.webkit.handleWrapping.call(this);
                     bubble.update.call(this);
                     events.change.call(this);
                 },
                 ol: function(e) {
                     e.preventDefault();
                     d.execCommand('insertOrderedList', false);
+                    compatibility.webkit.handleWrapping.call(this);
                     bubble.update.call(this);
                     events.change.call(this);
                 },
