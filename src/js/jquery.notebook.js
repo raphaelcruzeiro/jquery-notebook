@@ -15,7 +15,7 @@
  * https://github.com/jakiestfu/Medium.js/
  */
 
-(function($, d, w) {
+(function($, d, w, n) {
 
     /*
      * This module deals with the CSS transforms. As it is not possible to easily
@@ -674,6 +674,25 @@
                 ul: function(e) {
                     e.preventDefault();
                     d.execCommand('insertUnorderedList', false);
+                    if(/webkit/i.test(n.userAgent)) {
+                        var sel = utils.selection.getSelection(),
+                            ul = $(sel.focusNode.parentNode.parentNode);
+                        if($(ul).is('ul')){
+                            ul.unwrap();
+                            var el = ul.find('li').first().get(0);
+                        } else {
+                            $(sel.focusNode).wrap('<p contenteditable="true"></p>');
+                            var el = $(sel.focusNode.parentNode).get(0);
+                        }
+                        var elText = el.firstChild;
+                        sel = utils.selection.getSelection();
+                        var range = d.createRange();
+                        range.setStart(elText, 0)
+                        range.setEnd(elText, elText.length);
+                        sel.removeAllRanges();
+                        sel.addRange(range);
+                        bubble.show.call(this);
+                    }
                     bubble.update.call(this);
                     events.change.call(this);
                 },
@@ -770,4 +789,4 @@
         modifiers: ['bold', 'italic', 'underline', 'h1', 'h2', 'ol', 'ul', 'anchor']
     };
 
-})(jQuery, document, window);
+})(jQuery, document, window, navigator);
