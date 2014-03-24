@@ -1,5 +1,5 @@
 # jQuery-Notebook
-**A simple, clean and elegant WYSIWYG rich text editor for web aplications**
+**A simple, clean and elegant WYSIWYG rich text editor for web aplications**   
 **Note:** Check out the fully functional demo and examples [here](http://raphaelcruzeiro.github.io/jquery-notebook/).
 # Usage
 **Prerequisites:** jQuery-Notebook's default styling uses [FontAwesome](http://fontawesome.io/) draw the icons on the _context bubble_. You can download FontAwesome [here](http://fontawesome.io/assets/font-awesome-4.0.3.zip) or link to the CDN.
