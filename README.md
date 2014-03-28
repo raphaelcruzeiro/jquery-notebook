@@ -1,8 +1,14 @@
 # jQuery-Notebook
-**A simple, clean and elegant WYSIWYG rich text editor for web aplications**   
+**A simple, clean and elegant WYSIWYG rich text editor for web aplications**
 **Note:** Check out the fully functional demo and examples [here](http://raphaelcruzeiro.github.io/jquery-notebook/).
 # Usage
-**Prerequisites:** jQuery-Notebook's default styling uses [FontAwesome](http://fontawesome.io/) draw the icons on the _context bubble_. You can download FontAwesome [here](http://fontawesome.io/assets/font-awesome-4.0.3.zip) or link to the CDN.
+
+**Prerequisites:** jQuery-Notebook's default styling [FontAwesome](http://fontawesome.io/) draw the icons on the _context bubble_.
+You can install both FontAwesome and jQUery-Notebook through bower with the following command:
+
+`bower install jquery-notebook font-awesome`
+
+Alternatively, you can download FontAwesome [here](http://fontawesome.io/assets/font-awesome-4.0.3.zip) or link to the CDN.
 
 ##### Add the FontAwesome css and jQuery-Notebook css to you page _head_:
 
@@ -30,7 +36,7 @@ $(document).ready(function(){
 });
 ```
 
-That's it!  
+That's it!
 
 # Available Commands
 
@@ -56,8 +62,8 @@ $.fn.notebook.defaults = {
 
 # Events
 
-- __contentChange__:  
-Fires every time the editor's content is modified:  
+- __contentChange__:
+Fires every time the editor's content is modified:
 
 ```js
 // Using jQuery:
@@ -77,7 +83,7 @@ editorDomElement.addEventListener('contentChange', function(e) {
 We use Github Issues to do basically everything on this project, from feature
 request to bug tracking. There are a few issues marked as _easy picking_.
 These issues are ideally suited for someone who wants to start contributing as
-they are fairly simple.  
+they are fairly simple.
 
 To contribute to this project just fork the repository,
 create a branch with a descriptive but brief name and send a pull
@@ -91,9 +97,9 @@ code with a different indentation will be rejected.
 
 
 # Contributors
-[raphaelcruzeiro](https://github.com/raphaelcruzeiro/)  
-[otaviosoares](https://github.com/otaviosoares/)  
-[slahn](https://github.com/slahn)  
-[TrevorHinesley](https://github.com/TrevorHinesley)  
-[cbartlett](https://github.com/cbartlett)  
-[penman](https://github.com/penman)  
+[raphaelcruzeiro](https://github.com/raphaelcruzeiro/)
+[otaviosoares](https://github.com/otaviosoares/)
+[slahn](https://github.com/slahn)
+[TrevorHinesley](https://github.com/TrevorHinesley)
+[cbartlett](https://github.com/cbartlett)
+[penman](https://github.com/penman)
