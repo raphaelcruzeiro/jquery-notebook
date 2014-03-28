@@ -4,7 +4,7 @@
 # Usage
 
 **Prerequisites:** jQuery-Notebook's default styling [FontAwesome](http://fontawesome.io/) draw the icons on the _context bubble_.
-You can install both FontAwesome and jQUery-Notebook through bower with the following command:
+You can install both FontAwesome and jQuery-Notebook through bower with the following command:
 
 `bower install jquery-notebook font-awesome`
 
