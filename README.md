@@ -1,5 +1,5 @@
 # jQuery-Notebook
-**A simple, clean and elegant WYSIWYG rich text editor for web aplications**
+**A simple, clean and elegant WYSIWYG rich text editor for web aplications**  
 **Note:** Check out the fully functional demo and examples [here](http://raphaelcruzeiro.github.io/jquery-notebook/).
 # Usage
 
@@ -97,9 +97,9 @@ code with a different indentation will be rejected.
 
 
 # Contributors
-[raphaelcruzeiro](https://github.com/raphaelcruzeiro/)
-[otaviosoares](https://github.com/otaviosoares/)
-[slahn](https://github.com/slahn)
-[TrevorHinesley](https://github.com/TrevorHinesley)
-[cbartlett](https://github.com/cbartlett)
-[penman](https://github.com/penman)
+[raphaelcruzeiro](https://github.com/raphaelcruzeiro/)  
+[otaviosoares](https://github.com/otaviosoares/)  
+[slahn](https://github.com/slahn)  
+[TrevorHinesley](https://github.com/TrevorHinesley)  
+[cbartlett](https://github.com/cbartlett)  
+[penman](https://github.com/penman)  
