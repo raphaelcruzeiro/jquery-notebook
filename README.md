@@ -36,6 +36,19 @@ $(document).ready(function(){
 });
 ```
 
+##### Disable the editor:
+
+```html
+<div class="my-editor"></div>
+```
+
+```js
+$(document).ready(function(){
+    notebook = $('.my-editor').notebook();
+    notebook.setContentEditable(false);
+});
+```
+
 That's it!
 
 # Available Commands
