@@ -336,7 +336,7 @@
                 });
             },
             show: function() {
-                if($(this).attr("contenteditable")=="true") {
+            	if($(this).attr("contenteditable")=="true" && options.modifiers.length > 0) {
                     var tag = $(this).parent().find('.bubble');
                     if (!tag.length) {
                         tag = utils.html.addTag($(this).parent(), 'div', false, false);
