@@ -714,7 +714,11 @@
                     var newElement = $(d.createElement("p"));
                     newElement.attr('contenteditable', true);
                     $(newElement).html(" ");
-                    $(elem).parent().after(newElement);
+                    if(elem.prop('tagName') != 'P'){
+                        $(elem).parent().after(newElement);
+                    }else{
+                        $(elem).after(newElement);
+                    }
                     cache.focusedElement = newElement;
                     utils.cursor.set(elem, 0, cache.focusedElement);
                     e.preventDefault();
