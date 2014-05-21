@@ -720,7 +720,12 @@
                             lastLi.remove();
                         }
                     }
-                    utils.html.addTag($(this), 'p', true, true);
+                    var newElement = $(d.createElement("p"));
+                    newElement.attr('contenteditable', true);
+                    $(newElement).html(" ");
+                    $(elem).parent().after(newElement);
+                    cache.focusedElement = newElement;
+                    utils.cursor.set(elem, 0, cache.focusedElement);
                     e.preventDefault();
                     e.stopPropagation();
                 }
