@@ -723,6 +723,7 @@
                     utils.cursor.set(elem, 0, cache.focusedElement);
                     e.preventDefault();
                     e.stopPropagation();
+                    bubble.show();
                 }
                 events.change.call(this);
             },
@@ -744,10 +745,16 @@
                 tempArea.focus();
 
                 setTimeout(function() {
+                    console.log(range);
+                    console.log(e);
                     var clipboardContent = '',
                         paragraphs = tempArea.val().split('\n');
                     for(var i = 0; i < paragraphs.length; i++) {
-                        clipboardContent += ['<p>', paragraphs[i], '</p>'].join('');
+                        if(range.commonAncestorContainer.tagName=="LI"){
+                            clipboardContent += "<li>"+paragraphs[i]+"</li>";
+                        }else{
+                            clipboardContent += "<p>"+paragraphs[i]+"</p>";
+                        }
                     }
                     tempArea.val('');
                     utils.selection.restore(range);
