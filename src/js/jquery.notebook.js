@@ -255,21 +255,23 @@
             }
         },
         bubble = {
+            targetX: null,
+            targetY: null,
             /*
              * This is called to position the bubble above the selection.
              */
             updatePos: function(editor, elem) {
-                var sel = w.getSelection(),
-                    range = sel.getRangeAt(0),
-                    boundary = range.getBoundingClientRect(),
-                    bubbleWidth = elem.width(),
-                    bubbleHeight = elem.height(),
-                    offset = editor.offset().left,
-                    pos = {
-                        x: (boundary.left + boundary.width / 2) - (bubbleWidth / 2),
-                        y: boundary.top - bubbleHeight - 8 + $(document).scrollTop()
-                    };
-                transform.translate(elem, pos.x, pos.y);
+                if (!bubble.targetX || !bubble.targetY) {
+                    var sel = w.getSelection(),
+                        range = sel.getRangeAt(0),
+                        boundary = range.getBoundingClientRect();
+                    bubble.targetX = boundary.left + boundary.width / 2;
+                    bubble.targetY = boundary.top - 8 + $(document).scrollTop();
+                }
+                //transform.translate(elem, pos.x, pos.y);
+                console.log(bubble.targetX);
+                console.log(bubble.targetY);
+                $(elem).css("position","absolute").css("top",bubble.targetY-elem.height()).css("left",bubble.targetX-elem.width()/2);
             },
             /*
              * Updates the bubble to set the active formats for the current selection.
