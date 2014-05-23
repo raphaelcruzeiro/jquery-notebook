@@ -823,7 +823,7 @@
                     e.stopPropagation();
                     setTimeout(function(){
                         bubble.show.call(cache.focusedElement);
-                    },500);
+                    },50);
                 }
                 events.change.call(this);
 
