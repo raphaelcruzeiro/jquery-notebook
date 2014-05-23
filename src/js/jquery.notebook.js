@@ -261,17 +261,28 @@
              * This is called to position the bubble above the selection.
              */
             updatePos: function(editor, elem) {
-                if (!bubble.targetX || !bubble.targetY) {
-                    var sel = w.getSelection(),
-                        range = sel.getRangeAt(0),
-                        boundary = range.getBoundingClientRect();
-                    bubble.targetX = boundary.left + boundary.width / 2;
-                    bubble.targetY = boundary.top - 8 + $(document).scrollTop();
+                var sel = w.getSelection(),
+                    range = sel.getRangeAt(0),
+                    boundary = range.getBoundingClientRect();
+                bubble.targetX = boundary.left + boundary.width / 2;
+                bubble.targetY = boundary.top - 8 + $(document).scrollTop();
+
+                var width = elem.width(),
+                    height = elem.height(),
+                    minDistEdge = 15;
+                $(elem).css("position","absolute").css({"top":bubble.targetY-height,"left":bubble.targetX-width/2,"width":width+2});
+
+                if(bubble.targetX-width/2 < 0) {
+                    var overflow = bubble.targetX-width/2;
+                    $(elem).css("left",minDistEdge);
+                    $(elem).find(".arrow").css("left",bubble.targetX-minDistEdge)
                 }
-                //transform.translate(elem, pos.x, pos.y);
-                console.log(bubble.targetX);
-                console.log(bubble.targetY);
-                $(elem).css("position","absolute").css("top",bubble.targetY-elem.height()).css("left",bubble.targetX-elem.width()/2);
+                else if(bubble.targetX+width/2 > $(window).width()) {
+                    var overflow = bubble.targetX+width/2 - $(window).width();
+                    console.log(overflow);
+                    $(elem).css("left",$(window).width()-width-minDistEdge);
+                    $(elem).find(".arrow").css("left",width/2+overflow+minDistEdge)
+                }
             },
             /*
              * Updates the bubble to set the active formats for the current selection.
@@ -311,6 +322,8 @@
                 }
             },
             buildMenu: function(editor, elem) {
+                bubble.targetX = null;
+                bubble.targetX = null;
                 var ul = utils.html.addTag(elem, 'ul', false, false);
                 for (var cmd in options.modifiers) {
                     var li = utils.html.addTag(ul, 'li', false, false);
@@ -330,6 +343,8 @@
                     type: 'text'
                 });
                 var closeBtn = utils.html.addTag(linkArea, 'button', false, false);
+                var arrow = utils.html.addTag(elem, 'div', false, false);
+                arrow.addClass("arrow");
                 closeBtn.click(function(e) {
                     e.preventDefault();
                     var editor = $(this).closest('.editor');
