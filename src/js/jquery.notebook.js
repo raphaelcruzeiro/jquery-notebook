@@ -255,21 +255,34 @@
             }
         },
         bubble = {
+            targetX: null,
+            targetY: null,
             /*
              * This is called to position the bubble above the selection.
              */
             updatePos: function(editor, elem) {
                 var sel = w.getSelection(),
                     range = sel.getRangeAt(0),
-                    boundary = range.getBoundingClientRect(),
-                    bubbleWidth = elem.width(),
-                    bubbleHeight = elem.height(),
-                    offset = editor.offset().left,
-                    pos = {
-                        x: (boundary.left + boundary.width / 2) - (bubbleWidth / 2),
-                        y: boundary.top - bubbleHeight - 8 + $(document).scrollTop()
-                    };
-                transform.translate(elem, pos.x, pos.y);
+                    boundary = range.getBoundingClientRect();
+                bubble.targetX = boundary.left + boundary.width / 2;
+                bubble.targetY = boundary.top - 8 + $(document).scrollTop();
+
+                var width = elem.width(),
+                    height = elem.height(),
+                    minDistEdge = 15;
+                $(elem).css("position","absolute").css({"top":bubble.targetY-height,"left":bubble.targetX-width/2,"width":width+2});
+
+                if(bubble.targetX-width/2 < 0) {
+                    var overflow = bubble.targetX-width/2;
+                    $(elem).css("left",minDistEdge);
+                    $(elem).find(".arrow").css("left",bubble.targetX-minDistEdge)
+                }
+                else if(bubble.targetX+width/2 > $(window).width()) {
+                    var overflow = bubble.targetX+width/2 - $(window).width();
+                    console.log(overflow);
+                    $(elem).css("left",$(window).width()-width-minDistEdge);
+                    $(elem).find(".arrow").css("left",width/2+overflow+minDistEdge)
+                }
             },
             /*
              * Updates the bubble to set the active formats for the current selection.
@@ -309,6 +322,8 @@
                 }
             },
             buildMenu: function(editor, elem) {
+                bubble.targetX = null;
+                bubble.targetX = null;
                 var ul = utils.html.addTag(elem, 'ul', false, false);
                 for (var cmd in options.modifiers) {
                     var li = utils.html.addTag(ul, 'li', false, false);
@@ -328,6 +343,8 @@
                     type: 'text'
                 });
                 var closeBtn = utils.html.addTag(linkArea, 'button', false, false);
+                var arrow = utils.html.addTag(elem, 'div', false, false);
+                arrow.addClass("arrow");
                 closeBtn.click(function(e) {
                     e.preventDefault();
                     var editor = $(this).closest('.editor');
@@ -732,6 +749,7 @@
                     utils.cursor.set(elem, 0, cache.focusedElement);
                     e.preventDefault();
                     e.stopPropagation();
+                    bubble.show();
                 }
                 events.change.call(this);
             },
@@ -753,10 +771,16 @@
                 tempArea.focus();
 
                 setTimeout(function() {
+                    console.log(range);
+                    console.log(e);
                     var clipboardContent = '',
                         paragraphs = tempArea.val().split('\n');
                     for(var i = 0; i < paragraphs.length; i++) {
-                        clipboardContent += ['<p>', paragraphs[i], '</p>'].join('');
+                        if(range.commonAncestorContainer.tagName=="LI"){
+                            clipboardContent += "<li>"+paragraphs[i]+"</li>";
+                        }else{
+                            clipboardContent += "<p>"+paragraphs[i]+"</p>";
+                        }
                     }
                     tempArea.val('');
                     utils.selection.restore(range);
