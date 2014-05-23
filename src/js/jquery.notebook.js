@@ -300,7 +300,8 @@
                     'h2': 'h2',
                     'a': 'anchor',
                     'ul': 'ul',
-                    'ol': 'ol'
+                    'ol': 'ol',
+                    'img': 'image'
                 };
                 for (var i = 0; i < formats.length; i++) {
                     var format = formats[i];
@@ -642,6 +643,36 @@
         },
         events = {
             commands: {
+                image: function(e) {
+                    if(FormData) {
+                        var input = $("<input type=\"file\" />");
+                        input.css({"position":"aboslute","top":-1000});
+                        $("body").append(input);
+                        $(input).on("change",function(e){
+                            var form = new FormData();
+                            console.log(e);
+                            form.append("image", e.target.files[0]);
+                            options = {
+                                url: 'https://api.imgur.com/3/image',
+                                type: "POST",
+                                headers: {
+                                    Authorization: "Client-ID 372c8399d108d53",
+                                    Accept: "application/json"
+                                },
+                                data: form,
+                                processData: false,
+                                contentType: false,
+                                success: function(data) {
+                                    console.log(data);
+                                }
+                            }
+                            $.ajax(options)
+                        });
+                        input.click();
+                    } else {
+                        alert("Not supported in this browser.");
+                    }
+                },
                 bold: function(e) {
                     e.preventDefault();
                     d.execCommand('bold', false);
@@ -806,6 +837,7 @@
         actions.prepare(this, options);
         actions.bindEvents(this);
         this.setContentEditable = actions.setContentEditable;
+        this.getContent = function() {return $(this).html();} ;
         return this;
     };
 
@@ -813,7 +845,7 @@
         autoFocus: false,
         placeholder: 'Your text here...',
         mode: 'multiline',
-        modifiers: ['bold', 'italic', 'underline', 'h1', 'h2', 'ol', 'ul', 'anchor']
+        modifiers: ['bold', 'italic', 'underline', 'h1', 'h2', 'ol', 'ul', 'anchor','image']
     };
 
 })(jQuery, document, window);
