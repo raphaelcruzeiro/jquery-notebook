@@ -184,6 +184,34 @@
                         range.collapse(false);
                         range.select();
                     }
+                },
+                insertNodeBefore: function(node) {
+                    if(node) {
+                        if (typeof window.getSelection != "undefined") {
+                            var sel = window.getSelection();
+                            if (sel.rangeCount) {
+                                var range = sel.getRangeAt(0);
+                                range.collapse(false);
+                                range.insertNode(node);
+                                range = range.cloneRange();
+                                range.selectNodeContents(node);
+                                range.collapse(false);
+                                sel.removeAllRanges();
+                                sel.addRange(range);
+                            }
+                        } else if (typeof document.selection != "undefined" && document.selection.type != "Control") {
+                            var html = (node.nodeType == 1) ? node.outerHTML : node.data;
+                            var id = "marker_" + ("" + Math.random()).slice(2);
+                            html += '<span id="' + id + '"></span>';
+                            var textRange = document.selection.createRange();
+                            textRange.collapse(false);
+                            textRange.pasteHTML(html);
+                            var markerSpan = document.getElementById(id);
+                            textRange.moveToElementText(markerSpan);
+                            textRange.select();
+                            markerSpan.parentNode.removeChild(markerSpan);
+                        }
+                    }
                 }
             },
             selection: {
@@ -264,20 +292,32 @@
                 var sel = w.getSelection(),
                     range = sel.getRangeAt(0),
                     boundary = range.getBoundingClientRect();
-                bubble.targetX = boundary.left + boundary.width / 2;
-                bubble.targetY = boundary.top - 8 + $(document).scrollTop();
+                console.log(range);
+                var newp;
+                if(boundary.width == 0) {
+                    newp = true;
+                    bubble.targetX = 0;
+                    bubble.targetY = range.commonAncestorContainer.offsetTop;
+                }else{
+                    newp = false;
+                    bubble.targetX = boundary.left + boundary.width / 2;
+                    bubble.targetY = boundary.top - 8 + $(document).scrollTop();
+                }
+                
 
                 var width = elem.width(),
                     height = elem.height(),
                     minDistEdge = 15;
                 $(elem).css("position","absolute").css({"top":bubble.targetY-height,"left":bubble.targetX-width/2,"width":width+2});
 
-                if(bubble.targetX-width/2 < 0) {
+                if(bubble.targetX-width/2 < 0 && !newp) {
+                    console.log("left edge");
                     var overflow = bubble.targetX-width/2;
                     $(elem).css("left",minDistEdge);
                     $(elem).find(".arrow").css("left",bubble.targetX-minDistEdge)
                 }
                 else if(bubble.targetX+width/2 > $(window).width()) {
+                    console.log("right edge");
                     var overflow = bubble.targetX+width/2 - $(window).width();
                     console.log(overflow);
                     $(elem).css("left",$(window).width()-width-minDistEdge);
@@ -646,7 +686,7 @@
                 image: function(e) {
                     if(FormData) {
                         var input = $("<input type=\"file\" />");
-                        input.css({"position":"aboslute","top":-1000});
+                        input.css({"position":"absolute","top":-1000,"left":-1000});
                         $("body").append(input);
                         $(input).on("change",function(e){
                             var form = new FormData();
@@ -662,8 +702,9 @@
                                 data: form,
                                 processData: false,
                                 contentType: false,
-                                success: function(data) {
-                                    console.log(data);
+                                success: function(res) {
+                                    utils.cursor.insertNodeBefore($("<img src=\""+res.data.link+"\" />")[0]);
+                                    input.remove();
                                 }
                             }
                             $.ajax(options)
@@ -780,9 +821,12 @@
                     utils.cursor.set(elem, 0, cache.focusedElement);
                     e.preventDefault();
                     e.stopPropagation();
-                    bubble.show();
+                    setTimeout(function(){
+                        bubble.show.call(cache.focusedElement);
+                    },500);
                 }
                 events.change.call(this);
+
             },
             paste: function(e) {
                 var elem = $(this),
