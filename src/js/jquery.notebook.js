@@ -259,15 +259,37 @@
              * This is called to position the bubble above the selection.
              */
             updatePos: function(editor, elem) {
+                var findLimitingParent, findMaxOffset;
+
+                findLimitingParent = function(starterElement) {
+                  var element, result;
+                  result = $(starterElement);
+                  while (!((result.is('html')) || (result.css('overflow') === 'hidden'))) {
+                    result = result.parent();
+                  }
+                  return result;
+                };
+
+                findMaxOffset = function(element) {
+                  var highOffset, lowOffset;
+                  highOffset = element.offset();
+                  lowOffset = findLimitingParent(element).offset();
+                  return {
+                    left: lowOffset.left - highOffset.left,
+                    top: lowOffset.top - highOffset.top
+                  };
+                };
+
                 var sel = w.getSelection(),
                     range = sel.getRangeAt(0),
                     boundary = range.getBoundingClientRect(),
                     bubbleWidth = elem.width(),
                     bubbleHeight = elem.height(),
                     offset = editor.offset().left,
+                    maxOffset = findMaxOffset(editor),
                     pos = {
-                        x: (boundary.left + boundary.width / 2) - (bubbleWidth / 2),
-                        y: boundary.top - bubbleHeight - 8 + $(document).scrollTop()
+                        x: Math.max((boundary.left + boundary.width / 2) - (bubbleWidth / 2), maxOffset.left),
+                        y: Math.max(boundary.top - bubbleHeight - 8 + $(document).scrollTop(), maxOffset.top)
                     };
                 transform.translate(elem, pos.x, pos.y);
             },
