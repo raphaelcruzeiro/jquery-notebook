@@ -469,7 +469,7 @@
                 }
             },
             setContentArea: function(elem) {
-                var id = $('body').find('.jquery-editor').length + 1;
+                var id = $('body').find('.jquery-notebook').length + 1;
                 elem.attr('data-jquery-notebook-id', id);
                 var body = $('body');
                 contentArea = $('<textarea></textarea>');
