@@ -265,7 +265,6 @@
                     parentBoundary = editor.parent()[0].getBoundingClientRect(),
                     bubbleWidth = elem.width(),
                     bubbleHeight = elem.height(),
-                    parentOffset = editor.parent().offset(),
                     pos = {
                         x: rangeBoundary.left - parentBoundary.left + (rangeBoundary.width / 2) - (bubbleWidth / 2),
                         y: rangeBoundary.top - parentBoundary.top - (8 + bubbleHeight)
