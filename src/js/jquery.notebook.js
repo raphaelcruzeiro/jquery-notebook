@@ -264,10 +264,10 @@
                     boundary = range.getBoundingClientRect(),
                     bubbleWidth = elem.width(),
                     bubbleHeight = elem.height(),
-                    offset = editor.offset().left,
+                    offset = editor.offset(),
                     pos = {
-                        x: (boundary.left + boundary.width / 2) - (bubbleWidth / 2),
-                        y: boundary.top - bubbleHeight - 8 + $(document).scrollTop()
+                        x: (boundary.left + boundary.width / 2) - (bubbleWidth / 2) - offset.left + $(document).scrollLeft(),
+                        y: boundary.top - bubbleHeight - 8 - offset.top + $(document).scrollTop()
                     };
                 transform.translate(elem, pos.x, pos.y);
             },
@@ -336,9 +336,9 @@
                 });
             },
             show: function() {
-                var tag = $(this).parent().find('.bubble');
+                var tag = $(this).find('.bubble');
                 if (!tag.length) {
-                    tag = utils.html.addTag($(this).parent(), 'div', false, false);
+                    tag = utils.html.addTag($(this), 'div', false, false);
                     tag.addClass('jquery-notebook bubble');
                 }
                 tag.empty();
