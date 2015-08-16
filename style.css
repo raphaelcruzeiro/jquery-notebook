@@ -1,6 +1,8 @@
 html, body {
     font-family: "Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Verdana,sans-serif;
     line-height: 25px;
+    padding: 0;
+    margin: 0;
 }
 
 p {
@@ -9,7 +11,8 @@ p {
 
 .editor {
     width: 680px;
-    margin: 100px auto;
+    margin: 0 auto;
+    padding-top: 100px;
     height: 700px;
 }
 

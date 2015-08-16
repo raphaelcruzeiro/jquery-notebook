@@ -261,13 +261,14 @@
             updatePos: function(editor, elem) {
                 var sel = w.getSelection(),
                     range = sel.getRangeAt(0),
-                    boundary = range.getBoundingClientRect(),
+                    rangeBoundary = range.getBoundingClientRect(),
+                    parentBoundary = editor.parent()[0].getBoundingClientRect(),
                     bubbleWidth = elem.width(),
                     bubbleHeight = elem.height(),
-                    offset = editor.offset(),
+                    parentOffset = editor.parent().offset(),
                     pos = {
-                        x: (boundary.left + boundary.width / 2) - (bubbleWidth / 2) - offset.left + $(document).scrollLeft(),
-                        y: boundary.top - bubbleHeight - 8 - offset.top + $(document).scrollTop()
+                        x: rangeBoundary.left - parentBoundary.left + (rangeBoundary.width / 2) - (bubbleWidth / 2),
+                        y: rangeBoundary.top - parentBoundary.top - (8 + bubbleHeight)
                     };
                 transform.translate(elem, pos.x, pos.y);
             },
@@ -336,9 +337,9 @@
                 });
             },
             show: function() {
-                var tag = $(this).find('.bubble');
+                var tag = $(this).parent().find('.bubble');
                 if (!tag.length) {
-                    tag = utils.html.addTag($(this), 'div', false, false);
+                    tag = utils.html.addTag($(this).parent(), 'div', false, false);
                     tag.addClass('jquery-notebook bubble');
                 }
                 tag.empty();
@@ -486,7 +487,7 @@
                 elem.attr('editor-mode', options.mode);
                 elem.attr('editor-placeholder', options.placeholder);
                 elem.attr('contenteditable', true);
-                elem.css('position', 'relative');
+                elem.parent().css('position', 'relative');
                 elem.addClass('jquery-notebook editor');
                 actions.setPlaceholder.call(elem, {});
                 actions.preserveElementFocus.call(elem);
