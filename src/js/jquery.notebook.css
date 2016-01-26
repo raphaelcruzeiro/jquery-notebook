@@ -82,6 +82,7 @@
 }
 
 .jquery-notebook.bubble button {
+    margin: 0;
     outline: none;
     border: none;
     background: transparent;
