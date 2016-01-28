@@ -336,22 +336,24 @@
                 });
             },
             show: function() {
-                var tag = $(this).parent().find('.bubble');
-                if (!tag.length) {
-                    tag = utils.html.addTag($(this).parent(), 'div', false, false);
-                    tag.addClass('jquery-notebook bubble');
+                if(options.modifiers.length > 0) {
+                    var tag = $(this).parent().find('.bubble');
+                    if (!tag.length) {
+                        tag = utils.html.addTag($(this).parent(), 'div', false, false);
+                        tag.addClass('jquery-notebook bubble');
+                    }
+                    tag.empty();
+                    bubble.buildMenu(this, tag);
+                    tag.show();
+                    bubble.updateState(this, tag);
+                    if (!tag.hasClass('active')) {
+                        tag.addClass('jump');
+                    } else {
+                        tag.removeClass('jump');
+                    }
+                    bubble.updatePos($(this), tag);
+                    tag.addClass('active');
                 }
-                tag.empty();
-                bubble.buildMenu(this, tag);
-                tag.show();
-                bubble.updateState(this, tag);
-                if (!tag.hasClass('active')) {
-                    tag.addClass('jump');
-                } else {
-                    tag.removeClass('jump');
-                }
-                bubble.updatePos($(this), tag);
-                tag.addClass('active');
             },
             update: function() {
                 var tag = $(this).parent().find('.bubble');
