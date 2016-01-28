@@ -310,7 +310,7 @@
             },
             buildMenu: function(editor, elem) {
                 var ul = utils.html.addTag(elem, 'ul', false, false);
-                for (var cmd in options.modifiers) {
+                for (var cmd = 0; cmd < options.modifiers.length; cmd++) {
                     var li = utils.html.addTag(ul, 'li', false, false);
                     var btn = utils.html.addTag(li, 'button', false, false);
                     btn.attr('editor-command', options.modifiers[cmd]);
