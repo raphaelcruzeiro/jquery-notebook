@@ -53,7 +53,7 @@
     -webkit-transition: opacity 0.15s;
 }
 
-.jquery-notebook.bubble:after {
+.jquery-notebook.bubble .arrow {
     content: '';
     display: block;
     position: absolute;
