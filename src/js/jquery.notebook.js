@@ -324,7 +324,7 @@
                 var linkArea = utils.html.addTag(elem, 'div', false, false);
                 linkArea.addClass('link-area');
                 var linkInput = utils.html.addTag(linkArea, 'input', false, false);
-                linkInput.attr({
+                linkInput.prop({
                     type: 'text'
                 });
                 var closeBtn = utils.html.addTag(linkArea, 'button', false, false);
