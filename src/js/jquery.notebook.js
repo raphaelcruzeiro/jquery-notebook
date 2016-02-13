@@ -171,7 +171,7 @@
                         range = d.createRange();
                         var selection = w.getSelection(),
                             lastChild = editor.children().last(),
-                            length = lastChild.html().length - 1,
+                            length = $(lastChild).html().length - 1,
                             toModify = elem ? elem[0] : lastChild[0],
                             theLength = typeof pos !== 'undefined' ? pos : length;
                         range.setStart(toModify, theLength);
@@ -711,9 +711,19 @@
                             lastLi.remove();
                         }
                     }
-                    utils.html.addTag($(this), 'p', true, true);
+                    var newElement = $(d.createElement("p"));
+                    newElement.attr('contenteditable', true);
+                    $(newElement).html(" ");
+                    if(elem.prop('tagName') != 'P'){
+                        $(elem).parent().after(newElement);
+                    }else{
+                        $(elem).after(newElement);
+                    }
+                    cache.focusedElement = newElement;
+                    utils.cursor.set(elem, 0, cache.focusedElement);
                     e.preventDefault();
                     e.stopPropagation();
+                    bubble.show();
                 }
                 events.change.call(this);
             },
@@ -735,15 +745,24 @@
                 tempArea.focus();
 
                 setTimeout(function() {
+                    console.log(range);
+                    console.log(e);
                     var clipboardContent = '',
                         paragraphs = tempArea.val().split('\n');
                     for(var i = 0; i < paragraphs.length; i++) {
-                        clipboardContent += ['<p>', paragraphs[i], '</p>'].join('');
+                        if(range.commonAncestorContainer.tagName=="LI"){
+                            clipboardContent += "<li>"+paragraphs[i]+"</li>";
+                        }else{
+                            clipboardContent += "<p>"+paragraphs[i]+"</p>";
+                        }
                     }
                     tempArea.val('');
                     utils.selection.restore(range);
-                    d.execCommand('delete');
-                    d.execCommand('insertHTML', false, clipboardContent);
+                    console.log(range);
+                    if((range.commonAncestorContainer.tagName=="DIV" || range.commonAncestorContainer.tagName=="P") && range.commonAncestorContainer.innerHTML.length <= 1)
+                        $(range.commonAncestorContainer).after(clipboardContent).remove();
+                    else
+                        d.execCommand('insertHTML', false, clipboardContent);
                     events.change.call(this);
                 }, 500);
             },
