@@ -474,7 +474,7 @@
                 var body = $('body');
                 contentArea = $('<textarea></textarea>');
                 contentArea.css({
-                    position: 'absolute',
+                    position: 'fixed',
                     left: -1000
                 });
                 contentArea.attr('id', 'jquery-notebook-content-' + id);
