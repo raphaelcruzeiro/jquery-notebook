@@ -763,6 +763,14 @@
         return this;
     };
 
+    $.fn.isEmpty = function() {
+        if (($(this).find('.placeholder').length > 0) || (/^\s*$/.test($(this).text())) ) {
+             return true;
+        } else {
+             return false;
+        };
+    };
+
     $.fn.notebook.defaults = {
         autoFocus: false,
         placeholder: 'Your text here...',
