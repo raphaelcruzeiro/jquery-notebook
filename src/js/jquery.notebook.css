@@ -10,6 +10,11 @@
     min-height: 1px;
 }
 
+.jquery-notebook.editor img {
+    width: 100%;
+    border-radius: 5px;
+}
+
 .jquery-notebook.editor p.placeholder {
     position: absolute;
     z-index: 1;
@@ -53,7 +58,7 @@
     -webkit-transition: opacity 0.15s;
 }
 
-.jquery-notebook.bubble:after {
+.jquery-notebook.bubble .arrow {
     content: '';
     display: block;
     position: absolute;
@@ -127,6 +132,10 @@
 .jquery-notebook.bubble button.h2:after {
     font-family: inherit;
     content: "h2";
+}
+
+.jquery-notebook.bubble button.image:after {
+    content: "\f03e";
 }
 
 .jquery-notebook.bubble button.ul:after {

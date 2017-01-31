@@ -17,10 +17,12 @@ Alternatively, you can download FontAwesome [here](http://fontawesome.io/assets/
 <link rel="stylesheet" type="text/css" href="src/js/jquery.notebook.css">
 ```
 
-##### Add jquery and jquery-notebook.js to your page:
+##### Add jquery, rangy, and jquery-notebook.js to your page:
 
 ```html
 <script type="text/javascript" src="src/js/libs/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="src/js/libs/rangy/rangy-core.js"></script>
+<script type="text/javascript" src="src/js/libs/rangy/rangy-selectionsaverestore.js"></script>
 <script type="text/javascript" src="src/js/jquery.notebook.js"></script>
 ```
 
@@ -33,6 +35,19 @@ Alternatively, you can download FontAwesome [here](http://fontawesome.io/assets/
 ```js
 $(document).ready(function(){
     $('.my-editor').notebook();
+});
+```
+
+##### Disable the editor:
+
+```html
+<div class="my-editor"></div>
+```
+
+```js
+$(document).ready(function(){
+    notebook = $('.my-editor').notebook();
+    notebook.setContentEditable(false);
 });
 ```
 

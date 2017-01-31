@@ -171,7 +171,7 @@
                         range = d.createRange();
                         var selection = w.getSelection(),
                             lastChild = editor.children().last(),
-                            length = lastChild.html().length - 1,
+                            length = $(lastChild).html().length - 1,
                             toModify = elem ? elem[0] : lastChild[0],
                             theLength = typeof pos !== 'undefined' ? pos : length;
                         range.setStart(toModify, theLength);
@@ -183,6 +183,34 @@
                         range.moveToElementText(elem);
                         range.collapse(false);
                         range.select();
+                    }
+                },
+                insertNodeBefore: function(node) {
+                    if(node) {
+                        if (typeof window.getSelection != "undefined") {
+                            var sel = window.getSelection();
+                            if (sel.rangeCount) {
+                                var range = sel.getRangeAt(0);
+                                range.collapse(false);
+                                range.insertNode(node);
+                                range = range.cloneRange();
+                                range.selectNodeContents(node);
+                                range.collapse(false);
+                                sel.removeAllRanges();
+                                sel.addRange(range);
+                            }
+                        } else if (typeof document.selection != "undefined" && document.selection.type != "Control") {
+                            var html = (node.nodeType == 1) ? node.outerHTML : node.data;
+                            var id = "marker_" + ("" + Math.random()).slice(2);
+                            html += '<span id="' + id + '"></span>';
+                            var textRange = document.selection.createRange();
+                            textRange.collapse(false);
+                            textRange.pasteHTML(html);
+                            var markerSpan = document.getElementById(id);
+                            textRange.moveToElementText(markerSpan);
+                            textRange.select();
+                            markerSpan.parentNode.removeChild(markerSpan);
+                        }
                     }
                 }
             },
@@ -255,21 +283,46 @@
             }
         },
         bubble = {
+            targetX: null,
+            targetY: null,
             /*
              * This is called to position the bubble above the selection.
              */
             updatePos: function(editor, elem) {
                 var sel = w.getSelection(),
                     range = sel.getRangeAt(0),
-                    boundary = range.getBoundingClientRect(),
-                    bubbleWidth = elem.width(),
-                    bubbleHeight = elem.height(),
-                    offset = editor.offset().left,
-                    pos = {
-                        x: (boundary.left + boundary.width / 2) - (bubbleWidth / 2),
-                        y: boundary.top - bubbleHeight - 8 + $(document).scrollTop()
-                    };
-                transform.translate(elem, pos.x, pos.y);
+                    boundary = range.getBoundingClientRect();
+                console.log(range);
+                var newp;
+                if(boundary.width == 0) {
+                    newp = true;
+                    bubble.targetX = 0;
+                    bubble.targetY = range.commonAncestorContainer.offsetTop;
+                }else{
+                    newp = false;
+                    bubble.targetX = boundary.left + boundary.width / 2;
+                    bubble.targetY = boundary.top - 8 + $(document).scrollTop();
+                }
+                
+
+                var width = elem.width(),
+                    height = elem.height(),
+                    minDistEdge = 15;
+                $(elem).css("position","absolute").css({"top":bubble.targetY-height,"left":bubble.targetX-width/2,"width":width+2});
+
+                if(bubble.targetX-width/2 < 0 && !newp) {
+                    console.log("left edge");
+                    var overflow = bubble.targetX-width/2;
+                    $(elem).css("left",minDistEdge);
+                    $(elem).find(".arrow").css("left",bubble.targetX-minDistEdge)
+                }
+                else if(bubble.targetX+width/2 > $(window).width()) {
+                    console.log("right edge");
+                    var overflow = bubble.targetX+width/2 - $(window).width();
+                    console.log(overflow);
+                    $(elem).css("left",$(window).width()-width-minDistEdge);
+                    $(elem).find(".arrow").css("left",width/2+overflow+minDistEdge)
+                }
             },
             /*
              * Updates the bubble to set the active formats for the current selection.
@@ -287,7 +340,8 @@
                     'h2': 'h2',
                     'a': 'anchor',
                     'ul': 'ul',
-                    'ol': 'ol'
+                    'ol': 'ol',
+                    'img': 'image'
                 };
                 for (var i = 0; i < formats.length; i++) {
                     var format = formats[i];
@@ -309,6 +363,8 @@
                 }
             },
             buildMenu: function(editor, elem) {
+                bubble.targetX = null;
+                bubble.targetX = null;
                 var ul = utils.html.addTag(elem, 'ul', false, false);
                 for (var cmd in options.modifiers) {
                     var li = utils.html.addTag(ul, 'li', false, false);
@@ -328,6 +384,8 @@
                     type: 'text'
                 });
                 var closeBtn = utils.html.addTag(linkArea, 'button', false, false);
+                var arrow = utils.html.addTag(elem, 'div', false, false);
+                arrow.addClass("arrow");
                 closeBtn.click(function(e) {
                     e.preventDefault();
                     var editor = $(this).closest('.editor');
@@ -336,22 +394,24 @@
                 });
             },
             show: function() {
-                var tag = $(this).parent().find('.bubble');
-                if (!tag.length) {
-                    tag = utils.html.addTag($(this).parent(), 'div', false, false);
-                    tag.addClass('jquery-notebook bubble');
+            	if($(this).attr("contenteditable")=="true" && options.modifiers.length > 0) {
+                    var tag = $(this).parent().find('.bubble');
+                    if (!tag.length) {
+                        tag = utils.html.addTag($(this).parent(), 'div', false, false);
+                        tag.addClass('jquery-notebook bubble');
+                    }
+                    tag.empty();
+                    bubble.buildMenu(this, tag);
+                    tag.show();
+                    bubble.updateState(this, tag);
+                    if (!tag.hasClass('active')) {
+                        tag.addClass('jump');
+                    } else {
+                        tag.removeClass('jump');
+                    }
+                    bubble.updatePos($(this), tag);
+                    tag.addClass('active');
                 }
-                tag.empty();
-                bubble.buildMenu(this, tag);
-                tag.show();
-                bubble.updateState(this, tag);
-                if (!tag.hasClass('active')) {
-                    tag.addClass('jump');
-                } else {
-                    tag.removeClass('jump');
-                }
-                bubble.updatePos($(this), tag);
-                tag.addClass('active');
             },
             update: function() {
                 var tag = $(this).parent().find('.bubble');
@@ -432,6 +492,13 @@
                         rawEvents.mouseUp.call(elem, e);
                     }
                 });
+            },
+            setContentEditable: function(isCE) {
+                if(!isCE) {
+                    $(this).removeAttr("contenteditable");
+                } else {
+                    $(this).attr("contenteditable","true");
+                }
             },
             setPlaceholder: function(e) {
                 if (/^\s*$/.test($(this).text())) {
@@ -616,6 +683,37 @@
         },
         events = {
             commands: {
+                image: function(e) {
+                    if(FormData) {
+                        var input = $("<input type=\"file\" />");
+                        input.css({"position":"absolute","top":-1000,"left":-1000});
+                        $("body").append(input);
+                        $(input).on("change",function(e){
+                            var form = new FormData();
+                            console.log(e);
+                            form.append("image", e.target.files[0]);
+                            options = {
+                                url: 'https://api.imgur.com/3/image',
+                                type: "POST",
+                                headers: {
+                                    Authorization: "Client-ID 372c8399d108d53",
+                                    Accept: "application/json"
+                                },
+                                data: form,
+                                processData: false,
+                                contentType: false,
+                                success: function(res) {
+                                    utils.cursor.insertNodeBefore($("<img src=\""+res.data.link+"\" />")[0]);
+                                    input.remove();
+                                }
+                            }
+                            $.ajax(options)
+                        });
+                        input.click();
+                    } else {
+                        alert("Not supported in this browser.");
+                    }
+                },
                 bold: function(e) {
                     e.preventDefault();
                     d.execCommand('bold', false);
@@ -711,11 +809,24 @@
                             lastLi.remove();
                         }
                     }
-                    utils.html.addTag($(this), 'p', true, true);
+                    var newElement = $(d.createElement("p"));
+                    newElement.attr('contenteditable', true);
+                    $(newElement).html(" ");
+                    if(elem.prop('tagName') != 'P'){
+                        $(elem).parent().after(newElement);
+                    }else{
+                        $(elem).after(newElement);
+                    }
+                    cache.focusedElement = newElement;
+                    utils.cursor.set(elem, 0, cache.focusedElement);
                     e.preventDefault();
                     e.stopPropagation();
+                    setTimeout(function(){
+                        bubble.show.call(cache.focusedElement);
+                    },50);
                 }
                 events.change.call(this);
+
             },
             paste: function(e) {
                 var elem = $(this),
@@ -735,15 +846,24 @@
                 tempArea.focus();
 
                 setTimeout(function() {
+                    console.log(range);
+                    console.log(e);
                     var clipboardContent = '',
                         paragraphs = tempArea.val().split('\n');
                     for(var i = 0; i < paragraphs.length; i++) {
-                        clipboardContent += ['<p>', paragraphs[i], '</p>'].join('');
+                        if(range.commonAncestorContainer.tagName=="LI"){
+                            clipboardContent += "<li>"+paragraphs[i]+"</li>";
+                        }else{
+                            clipboardContent += "<p>"+paragraphs[i]+"</p>";
+                        }
                     }
                     tempArea.val('');
                     utils.selection.restore(range);
-                    d.execCommand('delete');
-                    d.execCommand('insertHTML', false, clipboardContent);
+                    console.log(range);
+                    if((range.commonAncestorContainer.tagName=="DIV" || range.commonAncestorContainer.tagName=="P") && range.commonAncestorContainer.innerHTML.length <= 1)
+                        $(range.commonAncestorContainer).after(clipboardContent).remove();
+                    else
+                        d.execCommand('insertHTML', false, clipboardContent);
                     events.change.call(this);
                 }, 500);
             },
@@ -760,6 +880,8 @@
         options = $.extend({}, $.fn.notebook.defaults, options);
         actions.prepare(this, options);
         actions.bindEvents(this);
+        this.setContentEditable = actions.setContentEditable;
+        this.getContent = function() {return $(this).html();} ;
         return this;
     };
 
@@ -767,7 +889,7 @@
         autoFocus: false,
         placeholder: 'Your text here...',
         mode: 'multiline',
-        modifiers: ['bold', 'italic', 'underline', 'h1', 'h2', 'ol', 'ul', 'anchor']
+        modifiers: ['bold', 'italic', 'underline', 'h1', 'h2', 'ol', 'ul', 'anchor','image']
     };
 
 })(jQuery, document, window);

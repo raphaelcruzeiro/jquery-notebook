@@ -16,23 +16,18 @@
             <p>Now, just take a time to test the editor. Yes, <b>this div is the editor</b>. Try to edit this text, select a part of this text and don't forget to try the basic text editor keyboard shortcuts.</p>
         </div>
         <script type="text/javascript" src="src/js/libs/jquery-1.10.2.min.js"></script>
+        <script type="text/javascript" src="src/js/libs/rangy/rangy-core.js"></script>
+        <script type="text/javascript" src="src/js/libs/rangy/rangy-selectionsaverestore.js"></script>
         <script type="text/javascript" src="src/js/jquery.notebook.js"></script>
         <script type="text/javascript">
             $(document).ready(function() {
-                $('.editor').notebook({
+                notebook = $('.editor').notebook({
                     autoFocus: true,
                     placeholder: 'Type something awesome...'
                 });
-            });
-        </script>
-        <script>
-            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-            ga('create', 'UA-46641093-3', 'raphaelcruzeiro.github.io');
-            ga('send', 'pageview');
+                //notebook.setContentEditable(false);
+            });
         </script>
     </body>
 </html>
