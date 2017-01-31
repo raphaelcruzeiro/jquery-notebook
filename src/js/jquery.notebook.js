@@ -336,22 +336,24 @@
                 });
             },
             show: function() {
-                var tag = $(this).parent().find('.bubble');
-                if (!tag.length) {
-                    tag = utils.html.addTag($(this).parent(), 'div', false, false);
-                    tag.addClass('jquery-notebook bubble');
+            	if($(this).attr("contenteditable")=="true" && options.modifiers.length > 0) {
+                    var tag = $(this).parent().find('.bubble');
+                    if (!tag.length) {
+                        tag = utils.html.addTag($(this).parent(), 'div', false, false);
+                        tag.addClass('jquery-notebook bubble');
+                    }
+                    tag.empty();
+                    bubble.buildMenu(this, tag);
+                    tag.show();
+                    bubble.updateState(this, tag);
+                    if (!tag.hasClass('active')) {
+                        tag.addClass('jump');
+                    } else {
+                        tag.removeClass('jump');
+                    }
+                    bubble.updatePos($(this), tag);
+                    tag.addClass('active');
                 }
-                tag.empty();
-                bubble.buildMenu(this, tag);
-                tag.show();
-                bubble.updateState(this, tag);
-                if (!tag.hasClass('active')) {
-                    tag.addClass('jump');
-                } else {
-                    tag.removeClass('jump');
-                }
-                bubble.updatePos($(this), tag);
-                tag.addClass('active');
             },
             update: function() {
                 var tag = $(this).parent().find('.bubble');
@@ -432,6 +434,13 @@
                         rawEvents.mouseUp.call(elem, e);
                     }
                 });
+            },
+            setContentEditable: function(isCE) {
+                if(!isCE) {
+                    $(this).removeAttr("contenteditable");
+                } else {
+                    $(this).attr("contenteditable","true");
+                }
             },
             setPlaceholder: function(e) {
                 if (/^\s*$/.test($(this).text())) {
@@ -711,7 +720,12 @@
                             lastLi.remove();
                         }
                     }
-                    utils.html.addTag($(this), 'p', true, true);
+                    var newElement = $(d.createElement("p"));
+                    newElement.attr('contenteditable', true);
+                    $(newElement).html(" ");
+                    $(elem).parent().after(newElement);
+                    cache.focusedElement = newElement;
+                    utils.cursor.set(elem, 0, cache.focusedElement);
                     e.preventDefault();
                     e.stopPropagation();
                 }
@@ -760,6 +774,7 @@
         options = $.extend({}, $.fn.notebook.defaults, options);
         actions.prepare(this, options);
         actions.bindEvents(this);
+        this.setContentEditable = actions.setContentEditable;
         return this;
     };
 

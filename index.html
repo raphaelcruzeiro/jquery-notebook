@@ -19,10 +19,12 @@
         <script type="text/javascript" src="src/js/jquery.notebook.js"></script>
         <script type="text/javascript">
             $(document).ready(function() {
-                $('.editor').notebook({
+                notebook = $('.editor').notebook({
                     autoFocus: true,
                     placeholder: 'Type something awesome...'
                 });
+
+                //notebook.setContentEditable(false);
             });
         </script>
         <script>
