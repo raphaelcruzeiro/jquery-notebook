@@ -1,5 +1,5 @@
 # jQuery-Notebook
-**A simple, clean and elegant WYSIWYG rich text editor for web aplications**  
+**A simple, clean and elegant WYSIWYG rich text editor for web applications**  
 **Note:** Check out the fully functional demo and examples [here](http://raphaelcruzeiro.github.io/jquery-notebook/).
 # Usage
 
